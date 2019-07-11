@@ -16,8 +16,8 @@ let slider;
 
 let history = [getTime()+": Game Started" ,"","","",""];
 function preload(){
-	popSnd = loadSound("pop.mp3");
-	enSnd = loadSound("enpop.mp3");
+	popSnd = loadSound("./libs/pop.mp3");
+	enSnd = loadSound("./libs/enpop.mp3");
 }
 function setup(){
 	w=windowWidth;
