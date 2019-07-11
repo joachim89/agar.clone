@@ -14,7 +14,7 @@ let enSnd;
 let slomo=1;
 let slider;
 
-let history = [getTime()+": Game Started" ,"","","",""];
+let history = [getTime()+": Game Started" ,getTime()+": Joachim says HI!","","",""];
 function preload(){
 	popSnd = loadSound("./libs/pop.mp3");
 	enSnd = loadSound("./libs/enpop.mp3");
