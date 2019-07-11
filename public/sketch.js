@@ -11,10 +11,11 @@ let points = 0;
 let scores = [];
 let popSnd;
 let enSnd;
-let slomo=1;
+let slomo=0;
 let slider;
+let startBtn;
 
-let history = [getTime()+": Game Started" ,getTime()+": Joachim says HI!","","",""];
+let history = [getTime()+": Joachim says HI!","" ,"","",""];
 function preload(){
 	popSnd = loadSound("./libs/pop.mp3");
 	enSnd = loadSound("./libs/enpop.mp3");
@@ -33,8 +34,10 @@ function setup(){
 		food.push(new Food);
 	}
 
-
-	slider = createSlider(0, 1000, 100);
+	startBtn = createButton("START GAME");
+	startBtn.position((w/2)-40,h/2);
+	startBtn.mousePressed(startGame);
+	slider = createSlider(0, 1000, 0);
   	slider.position((w/2)-250, h-50);
   	slider.style('width', '500px');
 
@@ -113,7 +116,11 @@ player.show();
 
 
 //FUNCTIONS
-
+function startGame(){
+	history.unshift(getTime()+": Game Started");
+	startBtn.hide();
+	slider.value(100);
+}
 function angle(cx, cy, ex, ey) {
 	var dy = ey - cy;
 	var dx = ex - cx;
