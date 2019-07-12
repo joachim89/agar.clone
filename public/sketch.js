@@ -6,7 +6,7 @@ let mapScale = 3000;
 let foodCount=100;
 let food = [];
 let enemy = [];
-let nrEnemies = 8;
+let nrEnemies = 19;
 let points = 0;
 let scores = [];
 let popSnd;
@@ -14,6 +14,7 @@ let enSnd;
 let slomo=0;
 let slider;
 let startBtn;
+let counter=0;
 
 let history = [getTime()+": Joachim says HI!","" ,"","",""];
 function preload(){
@@ -39,13 +40,15 @@ function setup(){
 	startBtn.mousePressed(startGame);
 	slider = createSlider(0, 1000, 0);
   	slider.position((w/2)-250, h-50);
-  	slider.style('width', '500px');
+	  slider.style('width', '500px');
+	  slider.hide();
 
 }
 
 function draw(){
 	background(255,156,91);
 	noStroke();
+	counter+=.1;
 	
 
 	//if(enemy.mass>player.mass){text("1th: Enemy\n2nd: Player",30,50);}else{text("1th: Player\n2nd: Enemy",30,50);}
@@ -120,6 +123,7 @@ function startGame(){
 	history.unshift(getTime()+": Game Started");
 	startBtn.hide();
 	slider.value(100);
+	slider.show();
 }
 function angle(cx, cy, ex, ey) {
 	var dy = ey - cy;
@@ -205,20 +209,33 @@ class Enemy {
 			if (enemy[en].name != this.name) {
 				if (enemy[en].x + (enemy[en].mass / 2) > this.x - (this.mass / 2) && enemy[en].x - (enemy[en].mass / 2) < this.x + (this.mass / 2) && enemy[en].y + (enemy[en].mass / 2) > this.y - (this.mass / 2) && enemy[en].y - (enemy[en].mass / 2) < this.y + (this.mass / 2)) {
 					//FOODHIT!
-					if(enemy[en].mass>this.mass){
-					enemy[en].mass += this.mass / 10;
-					if (enemy[en].speed > 1) { enemy[en].speed *= .99; }
-					enSnd.play();
-					
-					history.unshift(getTime()+ ": "+ enemy[en].name + " spiste " + this.name);
-					console.log(enemy[en].name + " spiste " + this.name);
-					this.reset();
-				}else{
-					this.mass += enemy[en].mass / 10;
-					
-					if (this.speed > 1) { this.speed *= .99; }
-					enSnd.play();
-					enemy[en].reset();
+					if (enemy[en].mass > this.mass) {
+						enemy[en].mass += .4;
+						this.mass -= 2;
+						if (this.mass < 20) {
+							enemy[en].mass += this.mass / 10;
+							if (enemy[en].speed > 1) { enemy[en].speed *= .99; }
+
+
+							enSnd.play();
+
+							history.unshift(getTime() + ": " + enemy[en].name + " spiste " + this.name);
+							//console.log(enemy[en].name + " spiste " + this.name);
+							this.reset();
+
+						}
+
+
+					} else {
+						enemy[en].mass -= 2;
+						this.mass += .4;
+						if(enemy[en].mass<20){
+						this.mass += enemy[en].mass / 10;
+
+						if (this.speed > 1) { this.speed *= .99; }
+						enSnd.play();
+						enemy[en].reset();
+					}
 				}
 				}
 			}
@@ -227,20 +244,25 @@ class Enemy {
 
 	hitPlayer(){
 		if(this.x + player.x > (w/2-((player.mass + this.mass)/2))  &&player.x + this.x<(w/2+((player.mass + this.mass)/2))  && player.y + this.y >(h/2-((player.mass + this.mass)/2))  && player.y + this.y <(h/2+((player.mass + this.mass)/2)) ){
-			console.log("HIT!");
-			if(this.mass>player.mass){
-				if(this.mass<500){this.mass+=player.mass/5;}
-				player.reset();
-				history.unshift(getTime()+ ": "+ this.name + " spiste " + player.name);
-				popSnd.play();
-				
-			}else{
-				if(player.mass<500){ player.mass+=this.mass/5;}
-				
-				history.unshift(getTime()+ ": "+ player.name + " spiste " + this.name);
+			//console.log("HIT!");
+			if (this.mass > player.mass) {
+				player.mass -= 2;
+				this.mass += .4;
+				if (player.mass < 20) {
+				this.mass += player.mass / 5;
+					player.reset();
+					history.unshift(getTime() + ": " + this.name + " spiste " + player.name);
+					popSnd.play();
+				}
+			} else {
+				player.mass +=.4;
+				this.mass-=2;
+				if (this.mass < 20) { player.mass += this.mass / 5; 
+
+				history.unshift(getTime() + ": " + player.name + " spiste " + this.name);
 				this.reset();
 				popSnd.play();
-				
+			}
 			}
 		}
 	}
@@ -255,11 +277,13 @@ class Enemy {
 class Player {
     constructor(){
       this.mass = 20;
-	  this.x = -mapScale/2;
+	  this.x=-mapScale + w/2 + Math.random()*mapScale;
+		this.y=-mapScale + h/2+ Math.random()*mapScale;
 	  this.angle=0;
 	  this.name = "Player";
-      this.y= -mapScale/2;
-        this.speed = 5;
+      this.parts=1;
+		this.speed = 5;
+		this.lastSplit=50;
       this.rgbc = {
             r: Math.random()*255,
             g: Math.random()*255,
@@ -267,32 +291,70 @@ class Player {
         };
    
     }
-    show(){
-	fill(0,0,0,50);
-	ellipse((w/2),(h/2)+(this.mass/2),this.mass,this.mass/5);
-        fill(this.rgbc.r,this.rgbc.g,this.rgbc.b);
-        ellipse(w/2,h/2,this.mass,this.mass);
-		textAlign(CENTER,CENTER);
-		fill(255);
-		text(this.mass.toFixed(),w/2,h/2);
-        this.move();
-    }
+	show() {
+		// beginShape();
+		// stroke(0);
+		// fill(this.rgbc.r,this.rgbc.g,this.rgbc.b);
+		for (var i = 0; i < this.parts; i++) {
+
+			
+			// vertex(	w/2 + Math.cos((TWO_PI/(this.parts))*i)*(this.mass/(this.parts/2)+this.lastSplit)+(Math.sin(counter+i)*10), h/2 +
+			// Math.sin((TWO_PI/(this.parts))*i)*(this.mass/(this.parts/2)+this.lastSplit))+(Math.cos(counter+i)*10);
+
+
+			push();
+			//translate((i-this.parts/2)*this.mass/this.parts,0);
+			if(i>0){
+			
+				
+				
+				translate(
+				Math.cos((TWO_PI/(this.parts-1))*i)*(this.mass/(this.parts/2)+this.lastSplit)+(Math.cos(counter+i)*10),
+				Math.sin((TWO_PI/(this.parts-1))*i)*(this.mass/(this.parts/2)+this.lastSplit)
+
+			);}
+
+			fill(0, 0, 0, 50);
+			ellipse((w / 2), (h / 2) + ((this.mass/2) / this.parts), this.mass/(this.parts+1), (this.mass/(this.parts+1)) / 5);
+			fill(this.rgbc.r, this.rgbc.g, this.rgbc.b);
+			ellipse(w / 2 , h / 2, this.mass/((this.parts+1)/2), this.mass/((this.parts+1)/2));
+			textAlign(CENTER, CENTER);
+			fill(255);
+			text((this.mass/this.parts).toFixed(), w / 2, h / 2);
+			pop();
+		}
+		// endShape(CLOSE);
+		this.move();
+	}
     move(){
+		if(this.lastSplit>0){this.lastSplit--;}
 	   this.angle = angle(w/2,h/2,mouseX,mouseY);
 	   var nx = this.x - Math.cos(this.angle)*(this.speed*slomo);
 	   var ny = this.y - Math.sin(this.angle)*(this.speed*slomo);
 		//sperre på banen
 	   this.x = constrain(nx, -mapScale+(w/2)+(player.mass/2),0+(w/2)-(player.mass/2));
 	   this.y = constrain(ny,-mapScale+(h/2)+(player.mass/2),0+(h/2)-(player.mass/2));
-	   
+	   if(keyIsDown(32) && this.lastSplit==0){
+		   //console.log("KEYPRESS");
+		   this.split();
+	   }
       //this.hitEnemy();
 	}
-
+	split(){
+		if(this.mass/(this.parts*2)>20){
+			this.lastSplit=100;
+			this.parts*=2;
+			console.log("Player splat");
+			history.push(getTime() + ": Player splat");
+			
+			
+		}
+	}
     reset(){
 	   this.mass=20;
 	   this.speed=5;
 	   points=0;
-
+		this.parts = 1;
 	   this.x=-mapScale + Math.random()*mapScale;
 		this.y=-mapScale + Math.random()*mapScale;
         
@@ -304,7 +366,7 @@ class Food{
 	constructor(){
 		this.x = Math.random()*mapScale;
 		this.y = Math.random()*mapScale;
-		this.mass = 5+ Math.random()*18;
+		this.mass = 10+ Math.random()*13;
 		this.rgbc = {
             r: map(this.mass,0,23,150,255),
             g: 99,
