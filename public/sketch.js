@@ -159,6 +159,14 @@ function angle(cx, cy, ex, ey) {
 	return n;
 
   }
+
+
+  function addGrave(inx,iny,inname){
+	graves.unshift(new Grave);
+	graves[0].x = inx;
+	graves[0].y = iny;
+	graves[0].name = inname;
+}
 // CLASSES:
 
 
@@ -225,9 +233,10 @@ class Enemy {
 
 							history.unshift(getTime() + ": " + enemy[en].name + " spiste " + this.name);
 							//console.log(enemy[en].name + " spiste " + this.name);
-							graves.unshift(new Grave);
-							graves[0].x = this.x;
-							graves[0].y = this.y;
+							
+							addGrave(this.x,this.y,this.name);
+							
+							
 							this.reset();
 
 						}
@@ -241,9 +250,8 @@ class Enemy {
 
 							if (this.speed > 1) { this.speed *= .99; }
 							enSnd.play();
-							graves.unshift(new Grave);
-							graves[0].x = enemy[en].x;
-							graves[0].y = enemy[en].y;
+							addGrave(enemy[en].x,enemy[en].y,enemy[en].name);
+							
 							enemy[en].reset();
 						}
 					}
@@ -260,9 +268,9 @@ class Enemy {
 				this.mass += .4;
 				if (player.mass < 20) {
 					this.mass += player.mass / 2;
-					graves.unshift(new Grave);
-					graves[0].x = player.x;
-					graves[0].y = player.y;
+					addGrave(-player.x + (w/2),-player.y + (h/2),"    " + player.name);
+					console.log(player.x,player.y,player.name);
+							
 					player.reset();
 
 					history.unshift(getTime() + ": " + this.name + " spiste " + player.name);
@@ -274,9 +282,8 @@ class Enemy {
 				if (this.mass < 20) { player.mass += this.mass / 2; 
 
 				history.unshift(getTime() + ": " + player.name + " spiste " + this.name);
-				graves.unshift(new Grave);
-					graves[0].x = this.x;
-					graves[0].y = this.y;
+				addGrave(this.x,this.y,this.name);
+							
 				this.reset();
 				popSnd.play();
 			}
@@ -309,15 +316,19 @@ class Grave {
 	constructor(){
 		this.x = 0;
 		this.y = 0;
+		this.name = "";
 	}
 	show(){
 		image(graveImg, this.x, this.y, 30, 45);
+		fill(0);
+		text(this.name,this.x-15,this.y+55);
 	}
 }
 
 
 class Player {
     constructor(){
+		
 		this.rgbc = {
 			r: Math.random() * 255,
 			g: Math.random() * 255,
