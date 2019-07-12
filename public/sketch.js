@@ -15,11 +15,14 @@ let slomo=0;
 let slider;
 let startBtn;
 let counter=0;
+let graveImg;
+let graves = [];
 
 let history = [getTime()+": Joachim says HI!","" ,"","",""];
 function preload(){
 	popSnd = loadSound("./libs/pop.mp3");
 	enSnd = loadSound("./libs/enpop.mp3");
+	graveImg = loadImage("./libs/dead.png");
 }
 function setup(){
 	w=windowWidth;
@@ -76,7 +79,10 @@ fill(255);
 
 
 
-
+for(var g = 0; g<graves.length;g++){
+	graves[g].show();
+	
+}
 
 for(i=0;i<food.length;i++){
 	food[i].show();
@@ -88,6 +94,7 @@ for(var e=0;e<enemy.length;e++){
 	// strokeWeight(enemy[e].mass/10);
 line(enemy[e].x, enemy[e].y, (w/2)-player.x, (h/2)-player.y);
 }
+
 
 pop();
 fill(0);
@@ -110,6 +117,8 @@ textAlign(LEFT);
 		text(history[his],30,(h-50)-his*15);
 	}
 player.show();	
+
+
 }
 
 
@@ -120,7 +129,15 @@ player.show();
 
 //FUNCTIONS
 function startGame(){
+	
 	history.unshift(getTime()+": Game Started");
+	for(var e=0;e<enemy.length;e++){
+		enemy[e].reset();
+	}
+	graves = [];
+	player.reset();
+	loop();
+
 	startBtn.hide();
 	slider.value(100);
 	slider.show();
@@ -147,24 +164,7 @@ function angle(cx, cy, ex, ey) {
 
 class Enemy {
 	constructor(){
-		this.mass=50;
-		this.x=Math.random()*mapScale;
-		this.y=Math.random()*mapScale;
-		this.angle = Math.random()*TWO_PI;
-		
-		this.speed=4;
-		this.distX;
-		this.angle;
-		this.name;
-		this.distY;
-		this.prevDist=9999;
-		this.prevName;
-		
-		this.rgbc = {
-            r: 59,
-            g: 129,
-            b: map(this.mass,0,500,100,255)
-        };
+		this.reset();
 	}
 	show(){
 		fill(0,0,0,50);
@@ -199,7 +199,11 @@ class Enemy {
 		 //sperre på banen
 		this.x = constrain(enx, 0+(this.mass/2),mapScale-(this.mass/2));
 		this.y = constrain(eny,0+(this.mass/2),mapScale-(this.mass/2));
-			
+		if(this.mass>1200){
+			history.unshift(getTime() + ": Game Over. " + this.name + " won!" );
+			noLoop();
+			startBtn.show();
+		}
 	
 	this.hitPlayer();
 	this.hitEnemy();
@@ -213,7 +217,7 @@ class Enemy {
 						enemy[en].mass += .4;
 						this.mass -= 2;
 						if (this.mass < 20) {
-							enemy[en].mass += this.mass / 10;
+							enemy[en].mass += this.mass / 5;
 							if (enemy[en].speed > 1) { enemy[en].speed *= .99; }
 
 
@@ -221,6 +225,9 @@ class Enemy {
 
 							history.unshift(getTime() + ": " + enemy[en].name + " spiste " + this.name);
 							//console.log(enemy[en].name + " spiste " + this.name);
+							graves.unshift(new Grave);
+							graves[0].x = this.x;
+							graves[0].y = this.y;
 							this.reset();
 
 						}
@@ -229,14 +236,17 @@ class Enemy {
 					} else {
 						enemy[en].mass -= 2;
 						this.mass += .4;
-						if(enemy[en].mass<20){
-						this.mass += enemy[en].mass / 10;
+						if (enemy[en].mass < 20) {
+							this.mass += enemy[en].mass / 5;
 
-						if (this.speed > 1) { this.speed *= .99; }
-						enSnd.play();
-						enemy[en].reset();
+							if (this.speed > 1) { this.speed *= .99; }
+							enSnd.play();
+							graves.unshift(new Grave);
+							graves[0].x = enemy[en].x;
+							graves[0].y = enemy[en].y;
+							enemy[en].reset();
+						}
 					}
-				}
 				}
 			}
 		}
@@ -249,17 +259,24 @@ class Enemy {
 				player.mass -= 2;
 				this.mass += .4;
 				if (player.mass < 20) {
-				this.mass += player.mass / 5;
+					this.mass += player.mass / 2;
+					graves.unshift(new Grave);
+					graves[0].x = player.x;
+					graves[0].y = player.y;
 					player.reset();
+
 					history.unshift(getTime() + ": " + this.name + " spiste " + player.name);
 					popSnd.play();
 				}
 			} else {
 				player.mass +=.4;
 				this.mass-=2;
-				if (this.mass < 20) { player.mass += this.mass / 5; 
+				if (this.mass < 20) { player.mass += this.mass / 2; 
 
 				history.unshift(getTime() + ": " + player.name + " spiste " + this.name);
+				graves.unshift(new Grave);
+					graves[0].x = this.x;
+					graves[0].y = this.y;
 				this.reset();
 				popSnd.play();
 			}
@@ -267,28 +284,47 @@ class Enemy {
 		}
 	}
 	reset(){
-		this.mass = 20;
-			   this.x = Math.random()*mapScale;
-			   this.y = Math.random()*mapScale;
-			   this.speed = 5;
+		this.mass = 30 + Math.random()*30;
+		this.x=Math.random()*mapScale;
+		this.y=Math.random()*mapScale;
+		this.angle = Math.random()*TWO_PI;
+		
+		this.speed=4;
+		this.distX;
+		this.angle;
+		this.name;
+		this.distY;
+		this.prevDist=9999;
+		this.prevName;
+		
+		this.rgbc = {
+            r: 59,
+            g: 129,
+            b: map(this.mass,0,500,100,255)
+        };
 	}
 }
 
+class Grave {
+	constructor(){
+		this.x = 0;
+		this.y = 0;
+	}
+	show(){
+		image(graveImg, this.x, this.y, 30, 45);
+	}
+}
+
+
 class Player {
     constructor(){
-      this.mass = 20;
-	  this.x=-mapScale + w/2 + Math.random()*mapScale;
-		this.y=-mapScale + h/2+ Math.random()*mapScale;
-	  this.angle=0;
-	  this.name = "Player";
-      this.parts=1;
-		this.speed = 5;
-		this.lastSplit=50;
-      this.rgbc = {
-            r: Math.random()*255,
-            g: Math.random()*255,
-            b: Math.random()*255
-        };
+		this.rgbc = {
+			r: Math.random() * 255,
+			g: Math.random() * 255,
+			b: Math.random() * 255
+		};
+
+    this.reset();
    
     }
 	show() {
@@ -350,15 +386,20 @@ class Player {
 			
 		}
 	}
-    reset(){
-	   this.mass=20;
-	   this.speed=5;
-	   points=0;
+	reset() {
+		this.mass = 20;
+		this.x = -mapScale + w / 2 + Math.random() * mapScale;
+		this.y = -mapScale + h / 2 + Math.random() * mapScale;
+		this.angle = 0;
+		this.name = "Player";
 		this.parts = 1;
-	   this.x=-mapScale + Math.random()*mapScale;
-		this.y=-mapScale + Math.random()*mapScale;
-        
-    }
+		this.speed = 5;
+		this.lastSplit = 50;
+	
+		points = 0;
+
+
+	}
 }
 
 
