@@ -385,8 +385,9 @@ class Player {
 	   var ny = this.y - Math.sin(this.angle)*(this.speed*slomo);
 		//DEVORI
 		if(gammaOr && betaOr && gameIsStarted){
-			nx = this.x - gammaOr/5;
-			ny = this.y - betaOr/5;
+			var newSpeed = map(this.mass,0,1200,.2,0);
+			nx = this.x - gammaOr*newSpeed;
+			ny = this.y - betaOr*newSpeed;
 		}
 
 
