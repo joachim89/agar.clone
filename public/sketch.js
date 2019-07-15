@@ -19,6 +19,9 @@ let graveImg;
 let graves = [];
 let gammaOr;
 let betaOr;
+let gameIsStarted = false;
+
+
 let history = [getTime()+": Joachim says HI!","" ,"","",""];
 function preload(){
 	popSnd = loadSound("./libs/pop.mp3");
@@ -130,7 +133,7 @@ player.show();
 
 //FUNCTIONS
 function startGame(){
-	
+	gameIsStarted=true;
 	history.unshift(getTime()+": Game Started");
 	for(var e=0;e<enemy.length;e++){
 		enemy[e].reset();
@@ -210,6 +213,7 @@ class Enemy {
 		this.y = constrain(eny,0+(this.mass/2),mapScale-(this.mass/2));
 		if(this.mass>1200){
 			history.unshift(getTime() + ": Game Over. " + this.name + " won!" );
+			gameIsStarted=false;
 			noLoop();
 			startBtn.show();
 		}
@@ -380,9 +384,9 @@ class Player {
 	   var nx = this.x - Math.cos(this.angle)*(this.speed*slomo);
 	   var ny = this.y - Math.sin(this.angle)*(this.speed*slomo);
 		//DEVORI
-		if(gammaOr && betaOr){
-			nx = this.x - gammaOr;
-			ny = this.y - betaOr;
+		if(gammaOr && betaOr && gameIsStarted){
+			nx = this.x - gammaOr/5;
+			ny = this.y - betaOr/5;
 		}
 
 
@@ -487,6 +491,6 @@ class Food{
 window.addEventListener('deviceorientation', function(e) 
 {
   //alphaOr = e.alpha;
-  betaOr = e.beta;
+  betaOr = e.beta + 1;
   gammaOr = e.gamma;
 });
