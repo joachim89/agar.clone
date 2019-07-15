@@ -101,10 +101,12 @@ line(enemy[e].x, enemy[e].y, (w/2)-player.x, (h/2)-player.y);
 
 
 pop();
+player.show();	
 fill(0);
 textAlign(LEFT);
 	slomo = slider.value()/100;
-	text("SPEED: " + player.speed.toFixed(2) + " - POINTS: " + points ,30,30);
+	if(betaOr){
+	text("SPEED: " + betaOr.toFixed(2) + " - POINTS: " + points ,30,30);}
 	scores=[];
 	for(var b = 0; b<enemy.length;b++){
 		scores.push(enemy[b]);
@@ -120,7 +122,7 @@ textAlign(LEFT);
 	for(var his = 0; his<5;his++){
 		text(history[his],30,(h-50)-his*15);
 	}
-player.show();	
+
 
 
 }
@@ -385,7 +387,7 @@ class Player {
 	   var ny = this.y - Math.sin(this.angle)*(this.speed*slomo);
 		//DEVORI
 		if(gammaOr && betaOr && gameIsStarted){
-			var newSpeed = map(this.mass,0,1200,.2,0);
+			var newSpeed = map(this.mass,20,1200,.2,0);
 			nx = this.x - gammaOr*newSpeed;
 			ny = this.y - betaOr*newSpeed;
 		}
