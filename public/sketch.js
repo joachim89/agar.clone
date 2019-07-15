@@ -491,6 +491,6 @@ class Food{
 window.addEventListener('deviceorientation', function(e) 
 {
   //alphaOr = e.alpha;
-  betaOr = e.beta + 1;
+  betaOr = e.beta - 2;
   gammaOr = e.gamma;
 });
