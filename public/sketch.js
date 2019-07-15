@@ -17,7 +17,8 @@ let startBtn;
 let counter=0;
 let graveImg;
 let graves = [];
-
+let gammaOr;
+let betaOr;
 let history = [getTime()+": Joachim says HI!","" ,"","",""];
 function preload(){
 	popSnd = loadSound("./libs/pop.mp3");
@@ -79,8 +80,8 @@ fill(255);
 
 
 
-for(var g = 0; g<graves.length;g++){
-	graves[g].show();
+for(var g = 0; g<10;g++){
+	if(graves[g]){graves[g].show();}
 	
 }
 
@@ -269,7 +270,6 @@ class Enemy {
 				if (player.mass < 20) {
 					this.mass += player.mass / 2;
 					addGrave(-player.x + (w/2),-player.y + (h/2),"    " + player.name);
-					console.log(player.x,player.y,player.name);
 							
 					player.reset();
 
@@ -375,9 +375,17 @@ class Player {
 	}
     move(){
 		if(this.lastSplit>0){this.lastSplit--;}
+		//MOUSEPLAY
 	   this.angle = angle(w/2,h/2,mouseX,mouseY);
 	   var nx = this.x - Math.cos(this.angle)*(this.speed*slomo);
 	   var ny = this.y - Math.sin(this.angle)*(this.speed*slomo);
+		//DEVORI
+		if(gammaOr && betaOr){
+			nx = this.x - gammaOr;
+			ny = this.y - betaOr;
+		}
+
+
 		//sperre på banen
 	   this.x = constrain(nx, -mapScale+(w/2)+(player.mass/2),0+(w/2)-(player.mass/2));
 	   this.y = constrain(ny,-mapScale+(h/2)+(player.mass/2),0+(h/2)-(player.mass/2));
@@ -476,3 +484,9 @@ class Food{
 		};
 	}
 }
+window.addEventListener('deviceorientation', function(e) 
+{
+  //alphaOr = e.alpha;
+  betaOr = e.beta;
+  gammaOr = e.gamma;
+});
