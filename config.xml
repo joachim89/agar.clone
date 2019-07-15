@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<widget xmlns   = "http://www.w3.org/ns/widgets"
+    xmlns:gap   = "http://phonegap.com/ns/1.0"
+    id          = "com.joachim.agario"
+    versionCode = "10"
+    version     = "0.0.1" >
+
+<!-- versionCode is optional and Android only -->
+  <icon src="icon.png" />
+  <splash src="icon.png" />
+  <name>Bloblyfe.</name>
+
+  
+  <description>
+     Eat as much as you can, and become the largest blob.
+  </description>
+
+  <author>
+        Joachim Skjaevestad
+  </author>
+ <preference name="fullscreen" value="true" />
+ <preference name="orientation" value="portrait" />
+ <preference name="KeepRunning" value="false"/>
+ <gap:plugin name="cordova-plugin-whitelist" source="npm" />
+
+<access origin="*" />
+<allow-navigation href="*" />
+<allow-intent href="*" />
+  <preference name="android-minSdkVersion"  value="16" />
+    <preference name="android-targetSdkVersion"  value="26" />
+</widget>
