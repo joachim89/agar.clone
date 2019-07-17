@@ -20,6 +20,8 @@ let graves = [];
 let gammaOr;
 let betaOr;
 let gameIsStarted = false;
+let gamOff;
+let betOff;
 
 
 let history = [getTime()+": Joachim says HI!","" ,"","",""];
@@ -31,6 +33,8 @@ function preload(){
 function setup(){
 	w=windowWidth;
 	h=windowHeight;
+	
+	
 	createCanvas(w,h);
 	player = new Player;
 	for(var e=0;e<nrEnemies;e++){
@@ -57,7 +61,11 @@ function draw(){
 	noStroke();
 	counter+=.1;
 	
+	if(mouseIsPressed){
+		gamOff = false;
+		betOff=false;
 
+	}
 	//if(enemy.mass>player.mass){text("1th: Enemy\n2nd: Player",30,50);}else{text("1th: Player\n2nd: Enemy",30,50);}
 
 
@@ -494,6 +502,11 @@ class Food{
 window.addEventListener('deviceorientation', function(e) 
 {
   //alphaOr = e.alpha;
-  betaOr = e.beta - 35;
-  gammaOr = e.gamma;
+  if(!gamOff && !betOff){
+	  gamOff = e.gamma;
+	  betOff = e.beta;
+  }
+
+  betaOr = e.beta - betOff;
+  gammaOr = e.gamma - gamOff;
 });
