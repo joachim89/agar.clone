@@ -39,8 +39,8 @@ function draw(){
 
     if(gammaOr && betaOr){
         
-        nx = blobx - gammaOr;
-        ny = bloby - betaOr;
+        nx = blobx + gammaOr;
+        ny = bloby + betaOr;
     }
 
 
@@ -89,8 +89,8 @@ function blob(x,y){
    
    translate(x,y);
     for(var c=0;c<TWO_PI;c+=.1){
-       var xoff = map(cos(c),-1,1,0,noiseMax)+mouseX/100;
-        var yoff = map(sin(c),-1,1,0,noiseMax)+mouseY/100;
+       var xoff = map(cos(c),-1,1,0,noiseMax)+blobx/100;
+        var yoff = map(sin(c),-1,1,0,noiseMax)+bloby/100;
       let r = map(noise(xoff,yoff),0,1,50  ,100);
       let x = r*cos(c);
       let y = r*sin(c);
