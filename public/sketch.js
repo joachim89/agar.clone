@@ -22,13 +22,21 @@ let betaOr;
 let gameIsStarted = false;
 let gamOff;
 let betOff;
-
+let playerImg;
+let playerImgR
+let enemyImg;
+let playerShapeNoise=[];
 
 let history = [getTime()+": Joachim says HI!","" ,"","",""];
 function preload(){
 	popSnd = loadSound("./libs/pop.mp3");
 	enSnd = loadSound("./libs/enpop.mp3");
 	graveImg = loadImage("./libs/dead.png");
+	playerImg = loadImage("./libs/player.png");
+	playerImgR = loadImage("./libs/playerr.png");
+	enemyImg = loadImage("./libs/enemy.png");
+	
+
 }
 function setup(){
 	w=windowWidth;
@@ -37,6 +45,23 @@ function setup(){
 	
 	createCanvas(w,h);
 	player = new Player;
+
+
+
+	//FOR DEN NYE SIRKELEN
+	for (var n = 0; n < 50; n++) {
+		playerShapeNoise.push(noise(n / 100));
+	}
+	for (var n = 0; n < 50; n++) {
+		playerShapeNoise.unshift(noise(n / 100));
+	}
+
+	// console.log(playerShapeNoise);
+
+
+
+
+
 	for(var e=0;e<nrEnemies;e++){
 		enemy[e] = new Enemy;
 		enemy[e].name="Enemy " + parseInt(e+1);
@@ -53,6 +78,7 @@ function setup(){
   	slider.position((w/2)-250, h-50);
 	  slider.style('width', '500px');
 	  slider.hide();
+	  noLoop();
 
 }
 
@@ -130,9 +156,9 @@ textAlign(LEFT);
 	for(var his = 0; his<5;his++){
 		text(history[his],30,(h-50)-his*15);
 	}
-
-
-
+	// translate(w/2,h/2);
+	// playerShape(500);
+	//gridThing(100);
 }
 
 
@@ -181,6 +207,53 @@ function angle(cx, cy, ex, ey) {
 	graves[0].y = iny;
 	graves[0].name = inname;
 }
+
+
+function playerShape(mass) {
+	var r = mass;
+	var vrtxs = 100;
+	beginShape();
+	fill(35, 21, 124);
+	for (i = 0; i < vrtxs; i++) {
+		// wiggle : +(Math.sin(counter+i)*10) og +(Math.cos(counter+i)*10)
+
+		vertex(Math.cos((TWO_PI / vrtxs) * i) * playerShapeNoise[i]*r, Math.sin((TWO_PI / vrtxs) * i) * r);
+	}
+	endShape(CLOSE);
+
+
+
+
+}
+function blob(inx,iny,mass){
+	var noiseMax = .5;
+    beginShape();
+	
+  
+    for(var c=0;c<TWO_PI;c+=.1){
+       var xoff = map(cos(c),-1,1,0,noiseMax)+inx/400;
+        var yoff = map(sin(c),-1,1,0,noiseMax)+iny/400;
+      let r = map(noise(xoff,yoff),0,1,mass/3,mass/2);
+      let x = r*cos(c);
+      let y = r*sin(c);
+     
+      vertex(x,y);
+     
+
+    }
+    endShape(CLOSE);
+}
+function gridThing(size) {
+	for(var a=0;a<size;a++){
+	for(i=0;i<size;i++){
+		fill(map(noise(a/10,i/10),0,1,0,255));
+		rect(a*10,i*10,10,10);
+	}}
+
+}
+
+
+
 // CLASSES:
 
 
@@ -234,7 +307,8 @@ class Enemy {
 	hitEnemy() {
 		for (var en = 0; en < enemy.length; en++) {
 			if (enemy[en].name != this.name) {
-				if (enemy[en].x + (enemy[en].mass / 2) > this.x - (this.mass / 2) && enemy[en].x - (enemy[en].mass / 2) < this.x + (this.mass / 2) && enemy[en].y + (enemy[en].mass / 2) > this.y - (this.mass / 2) && enemy[en].y - (enemy[en].mass / 2) < this.y + (this.mass / 2)) {
+				if (enemy[en].x + (enemy[en].mass / 2) > this.x - (this.mass / 2) && enemy[en].x - (enemy[en].mass / 2) < this.x + (this.mass / 2) 
+				&& enemy[en].y + (enemy[en].mass / 2) > this.y - (this.mass / 2) && enemy[en].y - (enemy[en].mass / 2) < this.y + (this.mass / 2)) {
 					//FOODHIT!
 					if (enemy[en].mass > this.mass) {
 						enemy[en].mass += .4;
@@ -276,7 +350,8 @@ class Enemy {
 	}
 
 	hitPlayer(){
-		if(this.x + player.x > (w/2-((player.mass + this.mass)/2))  &&player.x + this.x<(w/2+((player.mass + this.mass)/2))  && player.y + this.y >(h/2-((player.mass + this.mass)/2))  && player.y + this.y <(h/2+((player.mass + this.mass)/2)) ){
+		if(this.x + player.x > (w/2-((player.mass + this.mass)/2))  &&player.x + this.x<(w/2+((player.mass + this.mass)/2))  
+		&& player.y + this.y >(h/2-((player.mass + this.mass)/2))  && player.y + this.y <(h/2+((player.mass + this.mass)/2)) ){
 			//console.log("HIT!");
 			if (this.mass > player.mass) {
 				player.mass -= 2;
@@ -342,7 +417,7 @@ class Grave {
 
 class Player {
     constructor(){
-		
+		this.left=false;
 		this.rgbc = {
 			r: Math.random() * 255,
 			g: Math.random() * 255,
@@ -375,13 +450,27 @@ class Player {
 
 			);}
 
-			fill(0, 0, 0, 50);
-			ellipse((w / 2), (h / 2) + ((this.mass/2) / this.parts), this.mass/(this.parts+1), (this.mass/(this.parts+1)) / 5);
+			// fill(0, 0, 0, 50);
+			// ellipse((w / 2), (h / 2) + ((this.mass/2) / this.parts), this.mass/(this.parts+1), (this.mass/(this.parts+1)) / 5);
+			// fill(this.rgbc.r, this.rgbc.g, this.rgbc.b);
+			// ellipse(w / 2 , h / 2, this.mass/((this.parts+1)/2), this.mass/((this.parts+1)/2));
+			
+			
+			
+			// imageMode(CENTER);
+			// if(!this.left){
+			// 	image(playerImgR,w/2,h/2,this.mass/((this.parts+1)/2), this.mass/((this.parts+1)/2));
+			// }else{
+			// 	image(playerImg,w/2,h/2,this.mass/((this.parts+1)/2), this.mass/((this.parts+1)/2));
+			// }
+			push();
+			translate(w/2,h/2);
 			fill(this.rgbc.r, this.rgbc.g, this.rgbc.b);
-			ellipse(w / 2 , h / 2, this.mass/((this.parts+1)/2), this.mass/((this.parts+1)/2));
+			blob(this.x,this.y,this.mass);
+			pop();
 			textAlign(CENTER, CENTER);
 			fill(255);
-			text((this.mass/this.parts).toFixed(), w / 2, h / 2);
+			text((this.mass/this.parts).toFixed(), w / 2, (h / 2)-(this.mass/((this.parts+1)/2)))/2;
 			pop();
 		}
 		// endShape(CLOSE);
@@ -391,8 +480,15 @@ class Player {
 		if(this.lastSplit>0){this.lastSplit--;}
 		//MOUSEPLAY
 	   this.angle = angle(w/2,h/2,mouseX,mouseY);
-	   var nx = this.x - Math.cos(this.angle)*(this.speed*slomo);
-	   var ny = this.y - Math.sin(this.angle)*(this.speed*slomo);
+	   var distX = ((w/2)-mouseX);
+	   var distY = ((h/2)-mouseY);
+	   var nx = this.x - Math.cos(this.angle)*abs(distX/100);//(this.speed*slomo);
+	   var ny = this.y - Math.sin(this.angle)*abs(distY/100);//(this.speed*slomo);
+	   if(nx>this.x){
+		   this.left=true;
+	   }else{
+		   this.left=false;
+	   }
 		//DEVORI
 		if(gammaOr && betaOr && gameIsStarted){
 			var newSpeed = map(this.mass,20,1200,.2,0);
@@ -461,7 +557,8 @@ class Food{
 	checkHit(){
 	if(player){
 			
-			if(player.x + this.x > (w/2-(player.mass/2))  &&player.x + this.x<(w/2+(player.mass/2))  && player.y + this.y >(h/2-(player.mass/2))  && player.y + this.y <(h/2+(player.mass/2)) ){
+			if(player.x + this.x > (w/2-(player.mass/2))  &&player.x + this.x<(w/2+(player.mass/2)) 
+			 && player.y + this.y >(h/2-(player.mass/2))  && player.y + this.y <(h/2+(player.mass/2)) ){
 				//FOODHIT!
 				
 				player.mass+=this.mass/10;
@@ -476,7 +573,8 @@ class Food{
 	if(enemy){
 		for(var en=0; en<enemy.length;en++){
 			
-			if(enemy[en].x+(enemy[en].mass/2) > this.x-(this.mass/2) &&  enemy[en].x-(enemy[en].mass/2) < this.x+(this.mass/2) && enemy[en].y+(enemy[en].mass/2) > this.y-(this.mass/2) &&  enemy[en].y-(enemy[en].mass/2) < this.y+(this.mass/2)){
+			if(enemy[en].x+(enemy[en].mass/2) > this.x-(this.mass/2) &&  enemy[en].x-(enemy[en].mass/2) < this.x+(this.mass/2) 
+			&& enemy[en].y+(enemy[en].mass/2) > this.y-(this.mass/2) &&  enemy[en].y-(enemy[en].mass/2) < this.y+(this.mass/2)){
 				//FOODHIT!
 				
 				enemy[en].mass+=this.mass/10;
@@ -505,6 +603,7 @@ window.addEventListener('deviceorientation', function(e)
   if(!gamOff && !betOff){
 	  gamOff = e.gamma;
 	  betOff = e.beta;
+	  history.unshift(getTime() + ": Device orientation reset");
   }
 
   betaOr = e.beta - betOff;
