@@ -16,6 +16,8 @@ let gamOff;
 let betOff;
 let nx=0;
 let ny=0;
+let blobx;
+let bloby;
 
 function setup(){
    w = windowWidth;
@@ -73,8 +75,8 @@ function draw(){
 //     colorb += random(3);
 //     console.log(colorr,colorg,colorb);
 //    }} 
-    fill(map(mouseX,0,w,0,255), map(mouseY,0,h,0,255), counter);
-    blob(mouseX,mouseY);
+    fill(map(blobx,0,w,0,255), map(bloby,0,h,0,255), counter);
+    blob(blobx,bloby);
     prevMouse = { mx: mouseX,my: mouseY};
     
 }
