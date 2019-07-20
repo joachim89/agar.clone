@@ -21,11 +21,13 @@ let bloby;
 let rndX = 500;
 let rndY = 500;
 let rndCount=100;
-
+let blobs = {};
+let playerData;
 function setup(){
    w = windowWidth;
     h= windowHeight;
     createCanvas(w,h);
+    background(0);
     // fill(0);
  let xoff = 0;
     let yoff = 0;
@@ -35,8 +37,16 @@ function draw(){
 
     
     if(mouseIsPressed){
-        gamOff=false;
-        betOff=false;
+       
+            let data = {
+                name: socket.id,
+                x: mouseX,
+                y: mouseY
+            }
+            socket.emit('user-cord',data);
+    
+        // gamOff=false;
+        // betOff=false;
     }
 
 
@@ -85,23 +95,54 @@ function draw(){
 //    }} 
    // fill(map(blobx,0,w,0,255), map(bloby,0,h,0,255), counter);
 
-    blob(mouseX,mouseY);
+    //blob(mouseX,mouseY);
+   
 
-    blob(map(noise(rndCount+51),0,1,0,w),map(noise(rndCount+53),0,1,0,h));
-    blob(map(noise(rndCount+1),0,1,0,w),map(noise(rndCount+12),0,1,0,h));
-    blob(map(noise(rndCount+53),0,1,0,w),map(noise(rndCount+10),0,1,0,h));
-    prevMouse = { mx: mouseX,my: mouseY};
+    socket.on('user-cord', function(players){
+     //console.log(players);
+        for(let index in players){
+            if(!blobs[index].name == index.name){
+                blobs[index] = new Blob;
+                blobs[index].x = index.x;
+                blobs[index].y = index.y;
+                blobs[index].name=index.name;
+            }
+        }
+        //console.log(blobs);
+      });
+    //console.log("PLAYERDATA:",playerData);
+    
+    
+    for(let blb in blobs){
+        blobs[blb].show();
+    }
   
 }
 
+class Blob{
+    constructor(){
+        this.x;
+        this.y;
+        this.name;
+        
+    
+    }
+    show(){
+        if(this.x && this.y && this.name){
+      blob(this.x,this.y,this.name);
+    }else{
+        console.log("this.x",this.x);
+    }
+    }
+}
 
 
-
-function blob(ax,ay){
+function blob(ax,ay,name){
     push();
     beginShape();
     
    fill(map(ax,0,w,0,255), map(ay,0,h,0,255), counter);
+  
    translate(ax,ay);
     for(var c=0;c<TWO_PI;c+=.1){
        var xoff = map(cos(c),-1,1,0,noiseMax)+ax/100;
@@ -115,6 +156,8 @@ function blob(ax,ay){
 
     }
     endShape(CLOSE);
+    fill(255);
+    if(name){text(name,0,0);}
     pop();
 }
 
