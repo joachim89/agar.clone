@@ -5,8 +5,16 @@ const Server = http.Server(app)
 const PORT = process.env.PORT || 8000
 const io = require('socket.io')(Server)
 
-
+//SPILLTING:
 let serverPlayers = {};
+
+
+
+
+
+
+
+
 //Server.listen(PORT, () => console.log('Game server running on:', PORT))
 Server.listen(PORT, () => console.log("\x1b[33m%s\x1b[0m", "Server started at port " + "\x1b[31m" + PORT));
 

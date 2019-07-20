@@ -111,7 +111,7 @@ function sendInfo(){
  
 }
 function blob(dname,dx,dy){
-    
+    fill(255);
     ellipse(dx,dy,50,50);
     fill(0);
     textAlign(CENTER);
