@@ -1,5 +1,6 @@
 let w; 
 let h;
+let size;
 let joinedPlayer=false;
 
 
@@ -17,24 +18,26 @@ let userY=200;
 
 
 function setup() {
-
+    
     //CANVAS
-    w = windowWidth;
-    h = windowHeight;
+    w = 1920;
+    h = 1080;
+    size = windowWidth/w;
     createCanvas(w,h);
-   
+    scale(size);
+    console.log(size);
    
    
     //STARTMENY
     usernameText = createInput('Name');
-    usernameText.position(w/2-100,200);
+    usernameText.position(windowWidth/2-100,200);
     usernameText.mousePressed(clearIn);
     subBtn = createButton('OK');
-    subBtn.position((w/2)+60,200);
+    subBtn.position((windowWidth/2)+60,200);
     subBtn.id('subBtnId');
     subBtn.mousePressed(gameStart);
     subBtn2 = createButton('Show Info');
-    subBtn2.position(w-100,h-100);
+    subBtn2.position(windowWidth-100,windowHeight-100);
     subBtn2.mousePressed(viewData);
   
 
@@ -58,7 +61,7 @@ function draw() {
     if(!joinedPlayer){
         background(255);
         textAlign(CENTER);
-        text("Velkommen til multiplayerspillet!", w/2,190);
+        text("Velkommen til multiplayerspillet!", windowWidth/2,190);
         
 
      }else{
