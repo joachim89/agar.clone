@@ -59,11 +59,11 @@ function draw() {
         background(255);
         textAlign(CENTER);
         text("Velkommen til multiplayerspillet!", w/2,190);
-
-
+        
 
      }else{
         background(214,12,124);
+        fill(255);
       sendInfo(); blob(userName, userX, userY);
     
     
