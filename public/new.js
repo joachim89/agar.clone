@@ -1,30 +1,42 @@
-let blobs = {};
-let counter=0;
-let messageText;
-let subBtn;
-let players = {};
-let subBtn2;
-let userX=200;
-let userY=200;
-let data = {};
-let joinedPlayer=false;
-let userName;
 let w; 
 let h;
+let joinedPlayer=false;
+
+
+let usernameText;
+let subBtn;
+let subBtn2;
+
+let players = {};
+let data = {};
+
+let userName;
+let userX=200;
+let userY=200;
+
+
 
 function setup() {
+
+    //CANVAS
     w = windowWidth;
     h = windowHeight;
     createCanvas(w,h);
-    messageText = createInput('Name');
-    messageText.position(500,500);
+   
+   
+   
+    //STARTMENY
+    usernameText = createInput('Name');
+    usernameText.position(w/2-100,200);
+    usernameText.mousePressed(clearIn);
     subBtn = createButton('OK');
-    subBtn.position(660,500);
+    subBtn.position((w/2)+60,200);
     subBtn.id('subBtnId');
     subBtn.mousePressed(gameStart);
     subBtn2 = createButton('Show Info');
-    subBtn2.position(660,600);
+    subBtn2.position(w-100,h-100);
     subBtn2.mousePressed(viewData);
+  
 
 
     //DIS WORKED:
@@ -41,7 +53,18 @@ function setup() {
 }
 function draw() {
     //blob(random(300),random(500));
-    background(255);
+  
+
+    if(!joinedPlayer){
+        background(255);
+        textAlign(CENTER);
+        text("Velkommen til multiplayerspillet!", w/2,190);
+
+
+
+     }else{
+        background(214,12,124);
+      sendInfo(); blob(userName, userX, userY);
     
     
     
@@ -58,7 +81,7 @@ function draw() {
         blob(players[x].name, players[x].playerx, players[x].playery);
     }
     }
-    if(joinedPlayer){sendInfo(); blob(userName, userX, userY);}
+   
         
         userX +=(mouseX - userX) / 30;
         userY +=(mouseY - userY) /30;
@@ -66,17 +89,19 @@ function draw() {
     
 
     
-
+    }
 }
-
+function clearIn(){
+   if(usernameText.value() == "Name"){ usernameText.value("");}
+}
 function viewData(){
     socket.emit('view data');
 }
 
 function gameStart(){
     joinedPlayer=true;
-    userName = messageText.value();
-    messageText.hide();
+    userName = usernameText.value();
+    usernameText.hide();
     subBtn.hide();
 
 }
@@ -86,7 +111,7 @@ function sendInfo(){
  
 }
 function blob(dname,dx,dy){
-    fill(random(255),random(255),random(255));
+    
     ellipse(dx,dy,50,50);
     fill(0);
     textAlign(CENTER);
@@ -94,7 +119,7 @@ function blob(dname,dx,dy){
 }
 function keyPressed() {
     if (keyCode ==13) {
-      if(messageText.elt === document.activeElement ){
+      if(usernameText.elt === document.activeElement ){
           console.log("YES");
           gameStart();
       }else{
