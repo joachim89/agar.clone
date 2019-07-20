@@ -16,7 +16,7 @@ function setup() {
     w = windowWidth;
     h = windowHeight;
     createCanvas(w,h);
-    messageText = createInput('Message');
+    messageText = createInput('Name');
     messageText.position(500,500);
     subBtn = createButton('OK');
     subBtn.position(660,500);
@@ -62,7 +62,7 @@ function draw() {
         
         userX +=(mouseX - userX) / 30;
         userY +=(mouseY - userY) /30;
-        
+
     
 
     
@@ -86,7 +86,9 @@ function sendInfo(){
  
 }
 function blob(dname,dx,dy){
+    fill(random(255),random(255),random(255));
     ellipse(dx,dy,50,50);
+    fill(0);
     textAlign(CENTER);
     text(dname,dx,dy);
 }
