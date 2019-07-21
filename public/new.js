@@ -120,6 +120,7 @@ function draw() {
         for (var x in players) {
             // console.log(players[x].id,socket.id);
             if (players[x].id != socket.id) {
+                
                 blob(players[x].name, players[x].playerx, players[x].playery, players[x].mass);
             }
         }
@@ -192,7 +193,7 @@ class Apple{
         this.hit();
     }
     hit(){
-        if(userX > this.x-30 && userX < this.x +30 && userY > this.y-30 && userY < this.y+30){
+        if(userX > this.x-(userMass/2) && userX < this.x +(userMass/2) && userY > this.y-(userMass/2) && userY < this.y+(userMass/2)){
             userMass++;
             socket.emit('move apple', {nr: this.nr});
             console.log("move apple", this.nr);
