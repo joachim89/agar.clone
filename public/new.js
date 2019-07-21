@@ -7,6 +7,7 @@ let usernameText;
 let subBtn;
 let subBtn2;
 let subBtn3;
+let userRgbc = {};
 
 let players = {};
 let data = {};
@@ -54,10 +55,10 @@ function setup() {
     createCanvas(w, h);
     //STARTMENY
     usernameText = createInput('Name');
-    usernameText.position(w / 2 - 100, 200);
+    usernameText.position(w / 2 - 100, 300);
     usernameText.mousePressed(clearIn);
     subBtn = createButton('JOIN');
-    subBtn.position((w / 2) + 60, 200);
+    subBtn.position((w / 2) + 60, 300);
     subBtn.id('subBtnId');
     subBtn.mousePressed(gameStart);
     subBtn2 = createButton('Show Info');
@@ -72,6 +73,12 @@ function setup() {
         subBtn2.hide();
     }
  
+
+    userRgbc = {
+        r: random(255),
+        g: random(255),
+        b: random(255)
+    };
 
 
     //DIS WORKED:
@@ -121,7 +128,7 @@ function draw() {
         //background(255);
         clear();
         textAlign(CENTER);
-        text("Velkommen til multiplayerspillet!", w / 2, 190);
+        text("Velkommen til multiplayerspillet!", w / 2, 290);
         fill(0);
 
 
@@ -146,7 +153,15 @@ function draw() {
         // noFill();
        fill(82,178,70);
         rect(0,0,gameSize,gameSize);
-        strokeWeight(0);
+        stroke(0, 0, 0, 20);
+        strokeWeight(1);
+        for (var l = 0; l < gameSize / 50; l++) {
+            line(0, l * 50, gameSize, l * 50);
+            line(l * 50, 0, l * 50, gameSize);
+
+        }
+        noStroke();
+        
         for (var a =0; a<apples.length;a++) {
             // console.log(players[x].id,socket.id);
             apples[a].show();
@@ -155,8 +170,10 @@ function draw() {
         for (var x in players) {
             // console.log(players[x].id,socket.id);
             if (players[x].id != socket.id) {
-                
-                blob(players[x].name, -players[x].playerx + (players[x].wd/2), -players[x].playery+(players[x].hd/2), players[x].mass);
+                stroke(0,0,0,20);
+                strokeWeight(1);
+                line(-players[x].playerx + (players[x].wd/2),-players[x].playery+(players[x].hd/2),(w/2)-userX,(h/2)-userY);
+                blob(players[x].name, -players[x].playerx + (players[x].wd/2), -players[x].playery+(players[x].hd/2), players[x].mass,players[x].colors);
             }
         }
       
@@ -199,8 +216,8 @@ function draw() {
 
         sendInfo();
        
-        blob(userName, w/2, h/2,userMass);
-
+        blob(userName, w/2, h/2,userMass,userRgbc);
+        sortScores();
 
     }
 }
@@ -224,9 +241,9 @@ function printHistory(color) {
     fill(color!=undefined?color:255);
     textAlign(LEFT);
    // console.log(history);
-    text("NUMBER OF PLAYERS: " + connectCounter,w/10 , (h/10)-15);
+    text("HISTORY: " ,w/10 , h-(h/3)-15);
     for (i = 0; i < 10; i++) {
-        if (history[i]) { text(history[i], w/10 , h/10 + (15 * i)); }
+        if (history[i]) { text(history[i], w/10 , h-(h/3) + (15 * i)); }
     }
 
 }
@@ -241,12 +258,15 @@ function gameStart() {
 
 }
 function sendInfo() {
-    data = { id: socket.id, name: userName, playerx: userX, playery: userY, mass: userMass, wd:w,hd:h};
+    data = { id: socket.id, name: userName, playerx: userX, playery: userY, mass: userMass, wd:w,hd:h,colors:userRgbc};
     socket.emit('send player', data);
 
 }
-function blob(dname, dx, dy,mass) {
-    fill(255);
+function blob(dname, dx, dy,mass,colors) {
+    noStroke();
+    fill(0,0,0,60);
+    ellipse(dx,dy+mass/2,mass,mass/5);
+    fill(colors.r,colors.g,colors.b);
     ellipse(dx, dy, mass, mass);
     fill(0);
     textAlign(CENTER);
@@ -266,6 +286,8 @@ class Apple{
         if(this.delayer!=0){
             this.delayer--;
         }
+        fill(0,0,0,60);
+        ellipse(this.x,this.y+10,20,5);
         fill(255,0,0);
         ellipse(this.x, this.y, 20, 20);
         fill(0);
@@ -284,6 +306,8 @@ class Apple{
     }
 }
 
+
+
 function keyPressed() {
     if (keyCode == 13) {
         if (usernameText.elt === document.activeElement) {
@@ -298,6 +322,27 @@ function restartServer(restartData){
     socket.emit('restart',{restartData});
 }
 
+
+function sortScores(){
+    textAlign(LEFT);
+    fill(255);
+    var scores=[];
+	for( var s in players){
+        scores.push(players[s]);
+    }
+	scores.sort((a, b) => parseFloat(b.mass) - parseFloat(a.mass));
+    //console.log(scores);
+    text("NUMBER OF PLAYERS: " + connectCounter,w/10 ,h/10-30);
+    text("SCORES:",w/10,h/10-15);
+	for(var s = 0; s<scores.length;s++){
+		text(s+1 +": " + scores[s].name + " - " + scores[s].mass.toFixed(2), w/10,h/10 + (s*15));
+    }
+    textAlign(CENTER);
+
+}
+
+
+//eventlisteners
 window.addEventListener('deviceorientation', function(e) 
 {  
     if(e.gamma && e.beta){mobile=true;}else{mobile=false;}
@@ -311,3 +356,62 @@ window.addEventListener('deviceorientation', function(e)
   betaOr = e.beta - betOff;
   gammaOr = e.gamma - gamOff;
 });
+
+
+
+
+
+
+
+
+
+
+
+///ENEMYYYY
+
+class Enemy{
+    constructor(){
+        this.x;
+        this.y;
+        this.vx;
+        this.vy;
+        this.mass;
+        this.id;
+    }
+    move(){
+        fill(255);
+        ellipse(this.x, this.y, this.mass, this.mass);
+        fill(0);
+        textAlign(CENTER);
+        text(dname, this.x, this.y);
+    }
+    hit(){
+        if(w/2 > userX+this.x-(userMass/2) && w/2 < userX+ this.x +(userMass/2) && h/2 >userY + this.y-(userMass/2) && h/2 < userY + this.y+(userMass/2)){
+            if(this.delayer==0){userMass++;
+                apples[this.nr].x=100000;
+                // popSnd.play();
+                if(this.mass < userMass){
+                    if(this.mass>20){
+                        this.mass--;
+                        userMass++;
+                    }else{
+                        this.restart();
+                    }
+                }else{
+                    if(userMass>20){
+                        this.mass++
+                        userMass--
+                    }else{
+                        userRestart();
+                    }
+                }
+               
+            socket.emit('eat enemy', {thisMass: this.mass, userMass: userMass});
+           // console.log("move apple", this.nr);
+        this.delayer=10;}
+        }
+    }
+    restart(){
+        socket.emit('player restart', {player: this.id});
+    }
+}
