@@ -19,6 +19,7 @@ let userName;
 let userX = 200;
 let userY = 200;
 let userMass=50;
+let isLeft=false;
 
 let mobile=false;
 let gammaOr;
@@ -36,14 +37,16 @@ let graveImg;
 let playerImg;
 let playerImgR;
 let enemyImg;
+let appleImg;
+let playerSleep;
 
 // function preload(){
 // 	popSnd = loadSound("./libs/pop.mp3");
-// 	enSnd = loadSound("./libs/enpop.mp3");
-// 	graveImg = loadImage("./libs/dead.png");
-// 	playerImg = loadImage("./libs/player.png");
-// 	playerImgR = loadImage("./libs/playerr.png");
-// 	enemyImg = loadImage("./libs/enemy.png");
+// 	// enSnd = loadSound("./libs/enpop.mp3");
+// 	// graveImg = loadImage("./libs/dead.png");
+
+//     // enemyImg = loadImage("./libs/enemy.png");
+//     // appleImg = loadImage("./libs/apple.png");
 	
 
 // }
@@ -54,6 +57,13 @@ function setup() {
     w = windowWidth;
     h = windowHeight;
     createCanvas(w, h);
+    
+    appleImg = loadImage("./libs/apple.png");
+    popSnd = loadSound("./libs/pop.mp3");
+    enSnd = loadSound("./libs/enpop.mp3");
+    playerImg = loadImage("./libs/playerv2.png");
+    playerImgR = loadImage("./libs/playerv2r.png");
+    playerSleep = loadImage("./libs/playersleep.png");
     //STARTMENY
 
     if(randomNames){
@@ -81,9 +91,9 @@ function setup() {
  
 
     userRgbc = {
-        r: random(255),
-        g: random(255),
-        b: random(255)
+        r: random(155)+100,
+        g: random(155)+100,
+        b: random(155)+100
     };
 
 
@@ -142,8 +152,8 @@ function draw() {
         printHistory(0);
 
     } else {  //SELVE SPILLET:
-        background(70, 130, 60);
-       
+        // background(70, 130, 60);
+        background(255,156,91);
 
        
 
@@ -157,7 +167,8 @@ function draw() {
         stroke(0);
         strokeWeight(10);
         // noFill();
-       fill(82,178,70);
+    //    fill(82,178,70);
+       fill(250,208,137);
         rect(0,0,gameSize,gameSize);
         stroke(0, 0, 0, 20);
         strokeWeight(1);
@@ -181,7 +192,7 @@ function draw() {
                 line(-players[x].playerx + (players[x].wd/2),-players[x].playery+(players[x].hd/2),(w/2)-userX,(h/2)-userY);
                 var blobx = -players[x].playerx + (players[x].wd/2);
                 var bloby = -players[x].playery+(players[x].hd/2)
-                blob(players[x].name, blobx, bloby, players[x].mass,players[x].colors,players[x].paused);
+                blob(players[x].name, blobx, bloby, players[x].mass,players[x].colors,players[x].paused,players[x].left);
                 
                 
                 if(!players[x].paused){             
@@ -197,7 +208,7 @@ function draw() {
                         players[x].mass--;
                         userMass+=.5;
                     }else{
-                        
+                        enSnd.play();
                     }
                 }else{
                     if(userMass>20){
@@ -206,6 +217,7 @@ function draw() {
                     }else{
                         socket.emit('player eaten', {text: (userName+" was eaten by " + players[x].name) });
                         userRestart();
+                        enSnd.play();
 
                     }
                 }
@@ -228,12 +240,21 @@ function draw() {
 			var newSpeed = map(userMass,20,1200,.2,0);
 			var newX = userX - gammaOr*newSpeed;
             var newY = userY - betaOr*newSpeed;
+            if(newX<userX){
+                isLeft=false;
+            }else{
+                isLeft=true;
+            }
             userX = constrain(newX,-gameSize+(w/2)+(userMass/2),w/2-(userMass/2));
             userY = constrain(newY,-gameSize+(h/2)+(userMass/2),h/2-(userMass/2));
 		}else{
             var newX = userX+((w/2)-mouseX)/(userMass*2);
             var newY = userY+((h/2)-mouseY)/(userMass*2);
-            
+            if(newX<userX){
+                isLeft=false;
+            }else{
+                isLeft=true;
+            }
             userX = constrain(newX,-gameSize+(w/2)+(userMass/2),w/2-(userMass/2));
             userY = constrain(newY,-gameSize+(h/2)+(userMass/2),h/2-(userMass/2));
 
@@ -255,7 +276,7 @@ function draw() {
 
         sendInfo();
        
-        blob(userName, w/2, h/2,userMass,userRgbc,isPaused);
+        blob(userName, w/2, h/2,userMass,userRgbc,isPaused,isLeft);
         sortScores();
 
     }
@@ -297,11 +318,11 @@ function gameStart() {
 
 }
 function sendInfo() {
-    data = { id: socket.id, name: userName, playerx: userX, playery: userY, mass: userMass, wd:w,hd:h,colors:userRgbc, paused:isPaused};
+    data = { id: socket.id, name: userName, playerx: userX, playery: userY, mass: userMass, wd:w,hd:h,colors:userRgbc, paused:isPaused,left:isLeft};
     socket.emit('send player', data);
 
 }
-function blob(dname, dx, dy,mass,colors,paused) {
+function blob(dname, dx, dy,mass,colors,paused,left) {
     noStroke();
     fill(0,0,0,60);
     ellipse(dx,dy+mass/2,mass,mass/5);
@@ -309,10 +330,20 @@ function blob(dname, dx, dy,mass,colors,paused) {
     fill(colors.r,colors.g,colors.b,30);}else{ fill(colors.r,colors.g,colors.b);
 
     }
+  
     ellipse(dx, dy, mass, mass);
-    fill(0);
+    imageMode(CENTER);
+    if(!paused){
+    if(left){
+      image(playerImg,dx,dy,mass,mass);
+    }else{
+        image(playerImgR,dx,dy,mass,mass);
+    }}else{
+        image(playerSleep,dx,dy,mass,mass);
+    }
+      fill(0);
     textAlign(CENTER);
-    text(dname, dx, dy);
+    text(dname, dx, dy-mass/2);
 }
 
 function collision(p1x, p1y, r1, p2x, p2y, r2) {
@@ -345,17 +376,19 @@ class Apple{
         }
         fill(0,0,0,60);
         ellipse(this.x,this.y+10,20,5);
-        fill(255,0,0);
-        ellipse(this.x, this.y, 20, 20);
+        imageMode(CENTER);
+        image(appleImg,this.x,this.y,30,30);
+        // fill(255,0,0);
+        // ellipse(this.x, this.y, 20, 20);
         fill(0);
-        text(this.nr,this.x,this.y+5);
+       // text(this.nr,this.x,this.y+5);
         this.hit();
     }
     hit(){
-        if(w/2 > userX+this.x-(userMass/2) && w/2 < userX+ this.x +(userMass/2) && h/2 >userY + this.y-(userMass/2) && h/2 < userY + this.y+(userMass/2)){
+        if(w/2 > userX+this.x-(userMass/2) && w/2 < userX+ this.x +(userMass/2) && (h/2)+10 >userY + this.y-(userMass/2) && h/2 + 15< userY + this.y+(userMass/2)){
             if(this.delayer==0){userMass++;
                 apples[this.nr].x=100000;
-                // popSnd.play();
+                popSnd.play();
             socket.emit('move apple', {nr: this.nr});
            // console.log("move apple", this.nr);
         this.delayer=50;}
