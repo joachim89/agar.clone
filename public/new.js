@@ -54,9 +54,7 @@ function setup() {
     // bare for å hjelpe altså
 }
 function draw() {
-    if(delayer!=0){
-        delayer--;
-    }
+   
     // LAST HISTORIEN UANSETT
     socket.on('history', function (serverHistory) {
 
@@ -189,6 +187,9 @@ class Apple{
         this.delayer=0;
     }
     show(){
+        if(this.delayer!=0){
+            this.delayer--;
+        }
         fill(255,0,0);
         ellipse(this.x, this.y, 20, 20);
         fill(0);
