@@ -35,7 +35,7 @@ io.on('connection', function (socket) {
         console.log('\x1b[31muser disconnected', socket.id, "\x1b[37m total connections: ", connectCounter);
         if (typeof serverPlayers[socket.id] != "undefined") {
             addHistory(serverPlayers[socket.id].name + " left the game.");
-            connectCounter--;
+            if(counter>0){connectCounter--;}
         }
         io.emit('total players', { connectCounter });
         delete serverPlayers[socket.id];

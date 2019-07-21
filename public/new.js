@@ -17,7 +17,7 @@ let userX = 200;
 let userY = 200;
 let userMass=50;
 let connectCounter=0;
-let delayer=0;
+
 
 
 function setup() {
@@ -186,6 +186,7 @@ class Apple{
         this.x;
         this.y;
         this.nr;
+        this.delayer=0;
     }
     show(){
         fill(255,0,0);
@@ -196,10 +197,10 @@ class Apple{
     }
     hit(){
         if(userX > this.x-(userMass/2) && userX < this.x +(userMass/2) && userY > this.y-(userMass/2) && userY < this.y+(userMass/2)){
-            if(delayer==0){userMass++;
+            if(this.delayer==0){userMass++;
             socket.emit('move apple', {nr: this.nr});
             console.log("move apple", this.nr);
-        delayer=100;}
+        this.delayer=50;}
         }
     }
 }
