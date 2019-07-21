@@ -54,7 +54,9 @@ io.on('connection', function (socket) {
         io.emit('update players', serverPlayers);
 
     });
-    
+    socket.on('player eaten', function(txt){
+        addHistory(txt.text);
+    })
     // socket.on('restart', function () {
     //     restart();
     // })

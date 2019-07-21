@@ -182,7 +182,11 @@ function draw() {
                 var bloby = -players[x].playery+(players[x].hd/2)
                 blob(players[x].name, blobx, bloby, players[x].mass,players[x].colors);
 
-                if( blobx > (w/2)-userX - (userMass/2) && blobx < (w/2)-userX+(userMass/2) && bloby > (h/2)-userY - (userMass/2) && bloby < (h/2)-userY+(userMass/2)){
+                if (blobx + (players[x].mass / 2) > (w / 2) - userX - (userMass / 2) &&
+                    blobx - (players[x].mass / 2) < (w / 2) - userX + (userMass / 2) &&
+                    bloby + (players[x].mass / 2) > (h / 2) - userY - (userMass / 2) &&
+                    bloby - (players[x].mass / 2) < (h / 2) - userY + (userMass / 2)) {
+
                  //HIT
                  if(players[x].mass < userMass){
                     if(players[x].mass>20){
@@ -196,7 +200,9 @@ function draw() {
                         players[x].mass++
                         userMass--
                     }else{
+                        socket.emit('player eaten', {text: (userName+" was eaten by " + players[x].name) });
                         userRestart();
+
                     }
                 }
 
