@@ -26,7 +26,7 @@ function setup() {
     w = windowWidth;
     h = windowHeight;
     createCanvas(w, h);
-
+    console.log(w,h);
     //STARTMENY
     usernameText = createInput('Name');
     usernameText.position(w / 2 - 100, 200);

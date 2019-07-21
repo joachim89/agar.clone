@@ -35,7 +35,7 @@ io.on('connection', function (socket) {
         console.log('\x1b[31muser disconnected', socket.id, "\x1b[37m total connections: ", connectCounter);
         if (typeof serverPlayers[socket.id] != "undefined") {
             addHistory(serverPlayers[socket.id].name + " left the game.");
-            if(counter>0){connectCounter--;}
+            if(connectCounter>0){connectCounter--;}
         }
         io.emit('total players', { connectCounter });
         delete serverPlayers[socket.id];
@@ -71,10 +71,10 @@ io.on('connection', function (socket) {
         if(numr.nr){
         var nr = numr.nr;
 
-        apples[nr].x = Math.random()*2000;
-        apples[nr].y = Math.random()*2000;
+        apples[nr].x = Math.random()*1500;
+        apples[nr].y = Math.random()*1000;
         var data = apples[nr];
-        console.log("apple moved ", data);
+       // console.log("apple moved ", data);
         io.emit('move apple',{data} );
     }else{
         console.log("error: ", numr.nr);
