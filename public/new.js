@@ -182,12 +182,15 @@ function draw() {
                 var blobx = -players[x].playerx + (players[x].wd/2);
                 var bloby = -players[x].playery+(players[x].hd/2)
                 blob(players[x].name, blobx, bloby, players[x].mass,players[x].colors,players[x].paused);
-                if(!players[x].paused){
-                if (blobx + (players[x].mass / 2) > (w / 2) - userX - (userMass / 2) &&
-                    blobx - (players[x].mass / 2) < (w / 2) - userX + (userMass / 2) &&
-                    bloby + (players[x].mass / 2) > (h / 2) - userY - (userMass / 2) &&
-                    bloby - (players[x].mass / 2) < (h / 2) - userY + (userMass / 2)) {
-
+                
+                
+                if(!players[x].paused){             
+                // if (blobx + (players[x].mass / 2) > (w / 2) - userX - (userMass / 2) &&
+                //     blobx - (players[x].mass / 2) < (w / 2) - userX + (userMass / 2) &&
+                //     bloby + (players[x].mass / 2) > (h / 2) - userY - (userMass / 2) &&
+                //     bloby - (players[x].mass / 2) < (h / 2) - userY + (userMass / 2)) {
+                
+                if(collision(blobx, bloby, players[x].mass/2, (w/2)-userX, (h/2)-userY, userMass/2)){
                  //HIT
                  if(players[x].mass < userMass){
                     if(players[x].mass>20){
@@ -312,7 +315,22 @@ function blob(dname, dx, dy,mass,colors,paused) {
     text(dname, dx, dy);
 }
 
-
+function collision(p1x, p1y, r1, p2x, p2y, r2) {
+    var a;
+    var x;
+    var y;
+  
+    a = r1 + r2;
+    x = p1x - p2x;
+    y = p1y - p2y;
+  
+    if (a > Math.sqrt((x * x) + (y * y))) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
 
 class Apple{
     constructor(){
@@ -362,8 +380,9 @@ function restartServer(restartData){
 }
 
 function userRestart(){
-    userX = random(gameSize);
-    userY = random(gameSize);
+   
+    userX = map(random(gameSize),0,gameSize,-gameSize+(w/2)+(userMass/2),w/2-(userMass/2));
+    userY = map(random(gameSize),0,gameSize,-gameSize+(h/2)+(userMass/2),h/2-(userMass/2));
     userMass=50;
 }
 function sortScores(){
