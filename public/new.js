@@ -160,8 +160,8 @@ function draw() {
                 betOff=false;
             }
 			var newSpeed = map(userMass,20,1200,.2,0);
-			var newX = this.x - gammaOr*newSpeed;
-            var newY = this.y - betaOr*newSpeed;
+			var newX = userX - gammaOr*newSpeed;
+            var newY = userY - betaOr*newSpeed;
             userX = constrain(newX,-gameSize+(w/2)+(userMass/2),w/2-(userMass/2));
             userY = constrain(newY,-gameSize+(h/2)+(userMass/2),h/2-(userMass/2));
 		}else{
