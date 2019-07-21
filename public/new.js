@@ -112,6 +112,14 @@ function draw() {
         socket.on('update players', function (serverPlayers) {
             players = serverPlayers;
         });
+
+        push();
+        translate(userX,userY);
+        stroke(0);
+        strokeWeight(10);
+        noFill();
+        rect(0,0,gameSize,gameSize);
+        strokeWeight(0);
         for (var a =0; a<apples.length;a++) {
             // console.log(players[x].id,socket.id);
             apples[a].show();
@@ -121,22 +129,29 @@ function draw() {
             // console.log(players[x].id,socket.id);
             if (players[x].id != socket.id) {
                 
-                blob(players[x].name, players[x].playerx, players[x].playery, players[x].mass);
+                blob(players[x].name, -players[x].playerx + (w/2), -players[x].playery+(h/2), players[x].mass);
             }
         }
       
-        userX += (mouseX - userX) / 30;
-        userY += (mouseY - userY) / 30;
-
+            var newX = userX+((w/2)-mouseX)/100;
+            var newY = userY+((h/2)-mouseY)/100;
+            
+            userX = constrain(newX,-gameSize+(w/2)+(userMass/2),w/2-(userMass/2));
+            userY = constrain(newY,-gameSize+(h/2)+(userMass/2),h/2-(userMass/2));
+        
+        // userX += (mouseX - userX) / 30;
+        // userY += (mouseY - userY) / 30;
+        pop();
         fill(255);
         textAlign(LEFT); //PRINT HISTORY
         printHistory();
         
-
+        //text("X: "+ userX + "\nY: " + userY,100,50);
         text("NUMBER OF PLAYERS: " + connectCounter,100,85);
 
         sendInfo();
-        blob(userName, userX, userY,userMass);
+       
+        blob(userName, w/2, h/2,userMass);
 
 
     }
@@ -197,8 +212,9 @@ class Apple{
         this.hit();
     }
     hit(){
-        if(userX > this.x-(userMass/2) && userX < this.x +(userMass/2) && userY > this.y-(userMass/2) && userY < this.y+(userMass/2)){
+        if(w/2 > userX+this.x-(userMass/2) && w/2 < userX+ this.x +(userMass/2) && h/2 >userY + this.y-(userMass/2) && h/2 < userY + this.y+(userMass/2)){
             if(this.delayer==0){userMass++;
+                apples[this.nr].x=100000;
             socket.emit('move apple', {nr: this.nr});
             console.log("move apple", this.nr);
         this.delayer=50;}

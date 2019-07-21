@@ -56,7 +56,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('view data', function () {
-
+        console.log('\033[2J'); // lots of line breaks. clears screen
         console.log("\x1b[31m\nSHOWING ALL DATA IN PLAYERS ARRAY: \n", "\x1b[37m", serverPlayers);
         console.log("\n\n\n\x1b[31m\nSHOWING ALL DATA IN HISTORY ARRAY: \n", "\x1b[37m", history);
         console.log("\n\n\n\x1b[31m\nSHOWING ALL APPLES IN APPLES ARRAY: \n", "\x1b[37m", apples);
