@@ -54,7 +54,12 @@ function setup() {
     h = windowHeight;
     createCanvas(w, h);
     //STARTMENY
-    usernameText = createInput('Name');
+
+    if(randomNames){
+       var randomName = randomNames[round(random(randomNames.length))];
+     }else{ var randomName = "Name";}
+
+    usernameText = createInput(randomName);
     usernameText.position(w / 2 - 100, 300);
     usernameText.mousePressed(clearIn);
     subBtn = createButton('JOIN');
@@ -173,7 +178,30 @@ function draw() {
                 stroke(0,0,0,20);
                 strokeWeight(1);
                 line(-players[x].playerx + (players[x].wd/2),-players[x].playery+(players[x].hd/2),(w/2)-userX,(h/2)-userY);
-                blob(players[x].name, -players[x].playerx + (players[x].wd/2), -players[x].playery+(players[x].hd/2), players[x].mass,players[x].colors);
+                var blobx = -players[x].playerx + (players[x].wd/2);
+                var bloby = -players[x].playery+(players[x].hd/2)
+                blob(players[x].name, blobx, bloby, players[x].mass,players[x].colors);
+
+                if( blobx > (w/2)-userX - (userMass/2) && blobx < (w/2)-userX+(userMass/2) && bloby > (h/2)-userY - (userMass/2) && bloby < (h/2)-userY+(userMass/2)){
+                 //HIT
+                 if(players[x].mass < userMass){
+                    if(players[x].mass>20){
+                        players[x].mass--;
+                        userMass++;
+                    }else{
+                        
+                    }
+                }else{
+                    if(userMass>20){
+                        players[x].mass++
+                        userMass--
+                    }else{
+                        userRestart();
+                    }
+                }
+
+
+                }
             }
         }
       
@@ -322,7 +350,11 @@ function restartServer(restartData){
     socket.emit('restart',{restartData});
 }
 
-
+function userRestart(){
+    userX = random(gameSize);
+    userY = random(gameSize);
+    userMass=50;
+}
 function sortScores(){
     textAlign(LEFT);
     fill(255);

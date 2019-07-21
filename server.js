@@ -54,6 +54,7 @@ io.on('connection', function (socket) {
         io.emit('update players', serverPlayers);
 
     });
+    
     // socket.on('restart', function () {
     //     restart();
     // })
