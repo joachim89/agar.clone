@@ -146,7 +146,7 @@ function draw() {
             // console.log(players[x].id,socket.id);
             if (players[x].id != socket.id) {
                 
-                blob(players[x].name, -players[x].playerx + (w/2), -players[x].playery+(h/2), players[x].mass);
+                blob(players[x].name, -players[x].playerx + (players[x].wd/2), -players[x].playery+(players[x].hd/2), players[x].mass);
             }
         }
       
@@ -218,7 +218,7 @@ function gameStart() {
 
 }
 function sendInfo() {
-    data = { id: socket.id, name: userName, playerx: userX, playery: userY, mass: userMass};
+    data = { id: socket.id, name: userName, playerx: userX, playery: userY, mass: userMass, wd:w,hd:h};
     socket.emit('send player', data);
 
 }
