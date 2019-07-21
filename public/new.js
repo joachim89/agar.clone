@@ -8,6 +8,7 @@ let subBtn;
 let subBtn2;
 let subBtn3;
 let userRgbc = {};
+let isPaused = false;
 
 let players = {};
 let data = {};
@@ -180,8 +181,8 @@ function draw() {
                 line(-players[x].playerx + (players[x].wd/2),-players[x].playery+(players[x].hd/2),(w/2)-userX,(h/2)-userY);
                 var blobx = -players[x].playerx + (players[x].wd/2);
                 var bloby = -players[x].playery+(players[x].hd/2)
-                blob(players[x].name, blobx, bloby, players[x].mass,players[x].colors);
-
+                blob(players[x].name, blobx, bloby, players[x].mass,players[x].colors,players[x].paused);
+                if(!players[x].paused){
                 if (blobx + (players[x].mass / 2) > (w / 2) - userX - (userMass / 2) &&
                     blobx - (players[x].mass / 2) < (w / 2) - userX + (userMass / 2) &&
                     bloby + (players[x].mass / 2) > (h / 2) - userY - (userMass / 2) &&
@@ -191,21 +192,21 @@ function draw() {
                  if(players[x].mass < userMass){
                     if(players[x].mass>20){
                         players[x].mass--;
-                        userMass++;
+                        userMass+=.5;
                     }else{
                         
                     }
                 }else{
                     if(userMass>20){
-                        players[x].mass++
-                        userMass--
+                        players[x].mass+=.5;
+                        userMass--;
                     }else{
                         socket.emit('player eaten', {text: (userName+" was eaten by " + players[x].name) });
                         userRestart();
 
                     }
                 }
-
+                 }
 
                 }
             }
@@ -215,6 +216,7 @@ function draw() {
 
 
         //CONTROLS:
+        if(!isPaused){
         if(mobile){
             if(mouseIsPressed){
                 gamOff=false;
@@ -232,7 +234,7 @@ function draw() {
             userX = constrain(newX,-gameSize+(w/2)+(userMass/2),w/2-(userMass/2));
             userY = constrain(newY,-gameSize+(h/2)+(userMass/2),h/2-(userMass/2));
 
-        }
+        }}
 
 
 
@@ -250,7 +252,7 @@ function draw() {
 
         sendInfo();
        
-        blob(userName, w/2, h/2,userMass,userRgbc);
+        blob(userName, w/2, h/2,userMass,userRgbc,isPaused);
         sortScores();
 
     }
@@ -292,15 +294,18 @@ function gameStart() {
 
 }
 function sendInfo() {
-    data = { id: socket.id, name: userName, playerx: userX, playery: userY, mass: userMass, wd:w,hd:h,colors:userRgbc};
+    data = { id: socket.id, name: userName, playerx: userX, playery: userY, mass: userMass, wd:w,hd:h,colors:userRgbc, paused:isPaused};
     socket.emit('send player', data);
 
 }
-function blob(dname, dx, dy,mass,colors) {
+function blob(dname, dx, dy,mass,colors,paused) {
     noStroke();
     fill(0,0,0,60);
     ellipse(dx,dy+mass/2,mass,mass/5);
-    fill(colors.r,colors.g,colors.b);
+    if(paused){
+    fill(colors.r,colors.g,colors.b,30);}else{ fill(colors.r,colors.g,colors.b);
+
+    }
     ellipse(dx, dy, mass, mass);
     fill(0);
     textAlign(CENTER);
@@ -399,6 +404,17 @@ window.addEventListener('deviceorientation', function(e)
 
 
 
+
+window.addEventListener('blur', function(){
+    console.log("pause!");
+   isPaused=true;
+   sendInfo();
+ }, false);
+ 
+ window.addEventListener('focus', function(){
+     isPaused=false;
+    
+}, false);
 
 
 
