@@ -27,6 +27,24 @@ let betOff;
 let connectCounter=0;
 
 
+//sounds & imgs:
+let popSnd;
+let enSnd;
+let graveImg;
+let playerImg;
+let playerImgR;
+let enemyImg;
+
+// function preload(){
+// 	popSnd = loadSound("./libs/pop.mp3");
+// 	enSnd = loadSound("./libs/enpop.mp3");
+// 	graveImg = loadImage("./libs/dead.png");
+// 	playerImg = loadImage("./libs/player.png");
+// 	playerImgR = loadImage("./libs/playerr.png");
+// 	enemyImg = loadImage("./libs/enemy.png");
+	
+
+// }
 
 function setup() {
 
@@ -34,7 +52,6 @@ function setup() {
     w = windowWidth;
     h = windowHeight;
     createCanvas(w, h);
-    console.log(w,h);
     //STARTMENY
     usernameText = createInput('Name');
     usernameText.position(w / 2 - 100, 200);
@@ -66,7 +83,7 @@ function setup() {
     for (x in person) {
         text += person[x].alder;
     }
-    console.log(text);
+    // console.log(text);
     // bare for å hjelpe altså
 }
 function draw() {
@@ -92,31 +109,24 @@ function draw() {
             
             
         }
-        //console.log(apples);
-        // apples = serverApples.apples;
     });
     socket.on('move apple', function(serverApples){
        // console.log(serverApples);
             apples[serverApples.data.nr].x = serverApples.data.x;
             apples[serverApples.data.nr].y = serverApples.data.y;
-        
-            
-        
-        //console.log(apples);
-        // apples = serverApples.apples;
     });
 
 
     if (!joinedPlayer) { //MENYEN
         //background(255);
+        clear();
         textAlign(CENTER);
         text("Velkommen til multiplayerspillet!", w / 2, 190);
         fill(0);
 
 
-        textAlign(LEFT);
-        text("NUMBER OF PLAYERS: " + connectCounter,100,85);
-        printHistory();
+       
+        printHistory(0);
 
     } else {  //SELVE SPILLET:
         background(70, 130, 60);
@@ -180,12 +190,12 @@ function draw() {
         // userX += (mouseX - userX) / 30;
         // userY += (mouseY - userY) / 30;
         pop();
-        fill(255);
-        textAlign(LEFT); //PRINT HISTORY
+        
+        //PRINT HISTORY
         printHistory();
         
         //text("X: "+ userX + "\nY: " + userY,100,50);
-        text("NUMBER OF PLAYERS: " + connectCounter,100,85);
+       
 
         sendInfo();
        
@@ -194,16 +204,29 @@ function draw() {
 
     }
 }
+
+
+
+
+
+
+
+
+
+
 function clearIn() {
     if (usernameText.value() == "Name") { usernameText.value(""); }
 }
 function viewData() {
     socket.emit('view data');
 }
-function printHistory() {
-
+function printHistory(color) {
+    fill(color!=undefined?color:255);
+    textAlign(LEFT);
+   // console.log(history);
+    text("NUMBER OF PLAYERS: " + connectCounter,w/10 , (h/10)-15);
     for (i = 0; i < 10; i++) {
-        if (history[i]) { text(history[i], 100, 100 + (15 * i)); }
+        if (history[i]) { text(history[i], w/10 , h/10 + (15 * i)); }
     }
 
 }
@@ -253,6 +276,7 @@ class Apple{
         if(w/2 > userX+this.x-(userMass/2) && w/2 < userX+ this.x +(userMass/2) && h/2 >userY + this.y-(userMass/2) && h/2 < userY + this.y+(userMass/2)){
             if(this.delayer==0){userMass++;
                 apples[this.nr].x=100000;
+                // popSnd.play();
             socket.emit('move apple', {nr: this.nr});
            // console.log("move apple", this.nr);
         this.delayer=50;}
