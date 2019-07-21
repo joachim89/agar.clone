@@ -1,6 +1,6 @@
 let w;
 let h;
-let gameSize = 1000;
+let gameSize = 2000;
 let joinedPlayer = false;
 
 let usernameText;
@@ -17,7 +17,7 @@ let userX = 200;
 let userY = 200;
 let userMass=50;
 let connectCounter=0;
-
+let delayer=0;
 
 
 function setup() {
@@ -54,7 +54,9 @@ function setup() {
     // bare for å hjelpe altså
 }
 function draw() {
-
+    if(delayer!=0){
+        delayer--;
+    }
     // LAST HISTORIEN UANSETT
     socket.on('history', function (serverHistory) {
 
@@ -194,9 +196,10 @@ class Apple{
     }
     hit(){
         if(userX > this.x-(userMass/2) && userX < this.x +(userMass/2) && userY > this.y-(userMass/2) && userY < this.y+(userMass/2)){
-            userMass++;
+            if(delayer==0){userMass++;
             socket.emit('move apple', {nr: this.nr});
             console.log("move apple", this.nr);
+        delayer=100;}
         }
     }
 }

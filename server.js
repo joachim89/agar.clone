@@ -71,8 +71,8 @@ io.on('connection', function (socket) {
         if(numr.nr){
         var nr = numr.nr;
 
-        apples[nr].x = Math.random()*1000;
-        apples[nr].y = Math.random()*1000;
+        apples[nr].x = Math.random()*2000;
+        apples[nr].y = Math.random()*2000;
         var data = apples[nr];
         console.log("apple moved ", data);
         io.emit('move apple',{data} );
