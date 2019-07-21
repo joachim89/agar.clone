@@ -6,6 +6,7 @@ let joinedPlayer = false;
 let usernameText;
 let subBtn;
 let subBtn2;
+let subBtn3;
 
 let players = {};
 let data = {};
@@ -16,6 +17,13 @@ let userName;
 let userX = 200;
 let userY = 200;
 let userMass=50;
+
+let mobile=false;
+let gammaOr;
+let betaOr;
+let gamOff;
+let betOff;
+
 let connectCounter=0;
 
 
@@ -38,7 +46,15 @@ function setup() {
     subBtn2 = createButton('Show Info');
     subBtn2.position(w - 100, h - 100);
     subBtn2.mousePressed(viewData);
-
+    // subBtn3 = createButton('Restart server');
+    // subBtn3.position(w - 100, h - 75);
+    // subBtn3.mousePressed(restartServer);
+    if (location.hostname === "localhost" || location.hostname === "127.0.0.1"){
+        subBtn2.show();
+    }else{
+        subBtn2.hide();
+    }
+ 
 
 
     //DIS WORKED:
@@ -92,7 +108,7 @@ function draw() {
 
 
     if (!joinedPlayer) { //MENYEN
-        background(255);
+        //background(255);
         textAlign(CENTER);
         text("Velkommen til multiplayerspillet!", w / 2, 190);
         fill(0);
@@ -103,7 +119,7 @@ function draw() {
         printHistory();
 
     } else {  //SELVE SPILLET:
-        background(82, 178, 70);
+        background(70, 130, 60);
        
 
        
@@ -117,7 +133,8 @@ function draw() {
         translate(userX,userY);
         stroke(0);
         strokeWeight(10);
-        noFill();
+        // noFill();
+       fill(82,178,70);
         rect(0,0,gameSize,gameSize);
         strokeWeight(0);
         for (var a =0; a<apples.length;a++) {
@@ -133,11 +150,32 @@ function draw() {
             }
         }
       
-            var newX = userX+((w/2)-mouseX)/100;
-            var newY = userY+((h/2)-mouseY)/100;
+
+
+
+        //CONTROLS:
+        if(mobile){
+            if(mouseIsPressed){
+                gamOff=false;
+                betOff=false;
+            }
+			var newSpeed = map(userMass,20,1200,.2,0);
+			var newX = this.x - gammaOr*newSpeed;
+            var newY = this.y - betaOr*newSpeed;
+            userX = constrain(newX,-gameSize+(w/2)+(userMass/2),w/2-(userMass/2));
+            userY = constrain(newY,-gameSize+(h/2)+(userMass/2),h/2-(userMass/2));
+		}else{
+            var newX = userX+((w/2)-mouseX)/(userMass*2);
+            var newY = userY+((h/2)-mouseY)/(userMass*2);
             
             userX = constrain(newX,-gameSize+(w/2)+(userMass/2),w/2-(userMass/2));
             userY = constrain(newY,-gameSize+(h/2)+(userMass/2),h/2-(userMass/2));
+
+        }
+
+
+
+            
         
         // userX += (mouseX - userX) / 30;
         // userY += (mouseY - userY) / 30;
@@ -216,7 +254,7 @@ class Apple{
             if(this.delayer==0){userMass++;
                 apples[this.nr].x=100000;
             socket.emit('move apple', {nr: this.nr});
-            console.log("move apple", this.nr);
+           // console.log("move apple", this.nr);
         this.delayer=50;}
         }
     }
@@ -232,3 +270,20 @@ function keyPressed() {
         }
     }
 }
+function restartServer(restartData){
+    socket.emit('restart',{restartData});
+}
+
+window.addEventListener('deviceorientation', function(e) 
+{  
+    if(e.gamma && e.beta){mobile=true;}else{mobile=false;}
+  //alphaOr = e.alpha;
+  if(!gamOff && !betOff){
+	  gamOff = e.gamma;
+	  betOff = e.beta;
+	  
+  }
+
+  betaOr = e.beta - betOff;
+  gammaOr = e.gamma - gamOff;
+});
