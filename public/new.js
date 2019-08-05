@@ -232,7 +232,7 @@ function draw() {
 
         //CONTROLS:
         if(!isPaused){
-        if(mobile){
+        //if(mobile){
             if(mouseIsPressed){
                 gamOff=false;
                 betOff=false;
@@ -247,18 +247,18 @@ function draw() {
             }
             userX = constrain(newX,-gameSize+(w/2)+(userMass/2),w/2-(userMass/2));
             userY = constrain(newY,-gameSize+(h/2)+(userMass/2),h/2-(userMass/2));
-		}else{
-            var newX = userX+((w/2)-mouseX)/(userMass*2);
-            var newY = userY+((h/2)-mouseY)/(userMass*2);
-            if(newX<userX){
-                isLeft=false;
-            }else{
-                isLeft=true;
-            }
-            userX = constrain(newX,-gameSize+(w/2)+(userMass/2),w/2-(userMass/2));
-            userY = constrain(newY,-gameSize+(h/2)+(userMass/2),h/2-(userMass/2));
+		// }else{
+        //     var newX = userX+((w/2)-mouseX)/(userMass*2);
+        //     var newY = userY+((h/2)-mouseY)/(userMass*2);
+        //     if(newX<userX){
+        //         isLeft=false;
+        //     }else{
+        //         isLeft=true;
+        //     }
+        //     userX = constrain(newX,-gameSize+(w/2)+(userMass/2),w/2-(userMass/2));
+        //     userY = constrain(newY,-gameSize+(h/2)+(userMass/2),h/2-(userMass/2));
 
-        }}
+        // }}
 
 
 
@@ -327,7 +327,7 @@ function blob(dname, dx, dy,mass,colors,paused,left) {
     fill(0,0,0,60);
     ellipse(dx,dy+mass/2,mass,mass/5);
     if(paused){
-    fill(colors.r,colors.g,colors.b,30);}else{ fill(colors.r,colors.g,colors.b);
+    fill(colors.r,colors.g,colors.b,90);}else{ fill(colors.r,colors.g,colors.b);
 
     }
   
@@ -375,7 +375,7 @@ class Apple{
             this.delayer--;
         }
         fill(0,0,0,60);
-        ellipse(this.x,this.y+10,20,5);
+        ellipse(this.x,this.y+15,20,7);
         imageMode(CENTER);
         image(appleImg,this.x,this.y,30,30);
         // fill(255,0,0);
