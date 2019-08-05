@@ -247,7 +247,7 @@ function draw() {
             }
             userX = constrain(newX,-gameSize+(w/2)+(userMass/2),w/2-(userMass/2));
             userY = constrain(newY,-gameSize+(h/2)+(userMass/2),h/2-(userMass/2));
-		// }else{
+        	// }else{
         //     var newX = userX+((w/2)-mouseX)/(userMass*2);
         //     var newY = userY+((h/2)-mouseY)/(userMass*2);
         //     if(newX<userX){
@@ -258,7 +258,8 @@ function draw() {
         //     userX = constrain(newX,-gameSize+(w/2)+(userMass/2),w/2-(userMass/2));
         //     userY = constrain(newY,-gameSize+(h/2)+(userMass/2),h/2-(userMass/2));
 
-        // }}
+        // }
+    }
 
 
 
