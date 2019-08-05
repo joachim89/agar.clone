@@ -13,7 +13,7 @@ let connectCounter = 0;
 let apples = [];
 let nrApples = 30;
 for (i = 0; i < nrApples; i++) {
-    var apple = { nr: i, x: Math.random() * 2000, y: Math.random() * 2000 };
+    var apple = { nr: i, x: (Math.random() * 1960)+20, y: (Math.random() * 1960)+20 };
     apples.push(apple);
 }
 
