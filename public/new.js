@@ -231,35 +231,35 @@ function draw() {
 
 
         //CONTROLS:
-        if(!isPaused){
-        //if(mobile){
-            if(mouseIsPressed){
-                gamOff=false;
-                betOff=false;
-            }
-			var newSpeed = map(userMass,20,1200,.2,0);
-			var newX = userX - gammaOr*newSpeed;
-            var newY = userY - betaOr*newSpeed;
-            if(newX<userX){
-                isLeft=false;
-            }else{
-                isLeft=true;
-            }
-            userX = constrain(newX,-gameSize+(w/2)+(userMass/2),w/2-(userMass/2));
-            userY = constrain(newY,-gameSize+(h/2)+(userMass/2),h/2-(userMass/2));
-        	// }else{
-        //     var newX = userX+((w/2)-mouseX)/(userMass*2);
-        //     var newY = userY+((h/2)-mouseY)/(userMass*2);
-        //     if(newX<userX){
-        //         isLeft=false;
-        //     }else{
-        //         isLeft=true;
-        //     }
-        //     userX = constrain(newX,-gameSize+(w/2)+(userMass/2),w/2-(userMass/2));
-        //     userY = constrain(newY,-gameSize+(h/2)+(userMass/2),h/2-(userMass/2));
+        if (!isPaused) {
+            if (mobile) {
+                if (mouseIsPressed) {
+                    gamOff = false;
+                    betOff = false;
+                }
+                var newSpeed = map(userMass, 20, 1200, .2, 0);
+                var newX = userX - gammaOr * newSpeed;
+                var newY = userY - betaOr * newSpeed;
+                if (newX < userX) {
+                    isLeft = false;
+                } else {
+                    isLeft = true;
+                }
+                userX = constrain(newX, -gameSize + (w / 2) + (userMass / 2), w / 2 - (userMass / 2));
+                userY = constrain(newY, -gameSize + (h / 2) + (userMass / 2), h / 2 - (userMass / 2));
+            } else {
+                var newX = userX + ((w / 2) - mouseX) / (userMass * 2);
+                var newY = userY + ((h / 2) - mouseY) / (userMass * 2);
+                if (newX < userX) {
+                    isLeft = false;
+                } else {
+                    isLeft = true;
+                }
+                userX = constrain(newX, -gameSize + (w / 2) + (userMass / 2), w / 2 - (userMass / 2));
+                userY = constrain(newY, -gameSize + (h / 2) + (userMass / 2), h / 2 - (userMass / 2));
 
-        // }
-    }
+            }
+        }
 
 
 
@@ -451,7 +451,7 @@ window.addEventListener('deviceorientation', function(e)
 
   betaOr = e.beta - betOff;
   gammaOr = e.gamma - gamOff;
-});
+}, true);
 
 
 
