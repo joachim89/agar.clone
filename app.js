@@ -29,15 +29,15 @@ const cors = require('cors')
 const path = require('path')
 
 
-app.use(function(req, res, next) {
-    if(!req.secure) {
-      return res.redirect(['https://', req.get('Host'), req.url].join(''));
-    }
-    next();
-  });
+// app.use(function(req, res, next) {
+//     if(!req.secure) {
+//       return res.redirect(['https://', req.get('Host'), req.url].join(''));
+//     }
+//     next();
+//   });
 app.use('/js', express.static(path.join(__dirname + '/js')))
 app.use('/libs', express.static(path.join(__dirname +  '/libs')))
-app.use( express.static(path.join(__dirname +  '/public')))
+app.use( express.static(path.join('https://' + __dirname +  '/public')))
 app.use(cors())
 
 module.exports = app
