@@ -147,7 +147,8 @@ function draw() {
         textAlign(CENTER);
         text("Velkommen til multiplayerspillet!", w / 2, 290);
         fill(0);
-
+        textAlign(LEFT);
+        text("Gam: " + gammaOr + "\nBet: " + betaOr,10,10);
 
        
         printHistory(0);
@@ -284,7 +285,8 @@ function draw() {
        
         blob(userName, w/2, h/2,userMass,userRgbc,isPaused,isLeft);
         sortScores();
-        text("MOB?: " + mobile + "\nGAM: " + gammaOr + "\nBET: " + betaOr +"\n\nMAX: " + round(maxSpeed),50   ,50);
+        textAlign(RIGHT);
+        text("MOB?: " + mobile + "\nGAM: " + gammaOr + "\nBET: " + betaOr +"\n\nMAX: " + round(maxSpeed),w-50   ,50);
     }
 }
 
@@ -445,8 +447,10 @@ function sortScores(){
 
 
 //eventlisteners
-window.addEventListener('deviceorientation', function(e) 
-{  
+window.addEventListener('deviceorientation', handleOrientation);
+
+function handleOrientation(e){
+ 
     if(e.gamma && e.beta){mobile=true;}else{mobile=false;}
   //alphaOr = e.alpha;
   if(!gamOff && !betOff){
@@ -457,7 +461,8 @@ window.addEventListener('deviceorientation', function(e)
 
   betaOr = e.beta - betOff;
   gammaOr = e.gamma - gamOff;
-}, true);
+
+}
 
 
 
