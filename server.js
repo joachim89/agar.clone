@@ -13,7 +13,7 @@ let connectCounter = 0;
 let apples = [];
 let nrApples = 30;
 for (i = 0; i < nrApples; i++) {
-    var apple = { nr: i, x: (Math.random() * 1960)+20, y: (Math.random() * 1960)+20 };
+    var apple = { nr: i, x: (Math.random() * 1900)+50, y: (Math.random() * 1900)+50 };
     apples.push(apple);
 }
 
@@ -62,7 +62,7 @@ io.on('connection', function (socket) {
     // })
     socket.on('view data', function () {
 
-        console.log('\033[2J'); // lots of line breaks. clears screen
+       // console.log('\033[2J'); // lots of line breaks. clears screen
         console.log("\x1b[31m\nSHOWING ALL DATA IN PLAYERS ARRAY: \n", "\x1b[37m", serverPlayers);
         console.log("\n\n\n\x1b[31m\nSHOWING ALL DATA IN HISTORY ARRAY: \n", "\x1b[37m", history);
         console.log("\n\n\n\x1b[31m\nSHOWING ALL APPLES IN APPLES ARRAY: \n", "\x1b[37m", apples);
