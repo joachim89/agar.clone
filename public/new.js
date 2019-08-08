@@ -475,6 +475,7 @@ window.addEventListener('blur', function(){
     console.log("pause!");
    isPaused=true;
    sendInfo();
+   noSleep.disable();
  }, false);
  
  window.addEventListener('focus', function(){
