@@ -19,7 +19,7 @@ let userName;
 let userX = 200;
 let userY = 200;
 let userMass=50;
-let maxSpeed = 15;
+let maxSpeed = 0;
 let isLeft=false;
 
 let mobile=false;
@@ -253,7 +253,7 @@ function draw() {
                 var newSpeed = map(userMass, 20, 1200, .04, 0);
                 var newX = userX + constrain(((w / 2) - mouseX),-100,100) *newSpeed;
                 var newY = userY + constrain(((h / 2) - mouseY),-100,100) *newSpeed;
-            
+                
                 
                 if (newX < userX) {
                     isLeft = false;
@@ -284,7 +284,7 @@ function draw() {
        
         blob(userName, w/2, h/2,userMass,userRgbc,isPaused,isLeft);
         sortScores();
-        text("MOB?: " + mobile + "\nGAM: " + gammaOr + "\nBET: " + betaOr,50   ,50);
+        text("MOB?: " + mobile + "\nGAM: " + gammaOr + "\nBET: " + betaOr +"\n\nMAX: " + round(maxSpeed),50   ,50);
     }
 }
 
@@ -387,7 +387,7 @@ class Apple{
         // fill(255,0,0);
         // ellipse(this.x, this.y, 20, 20);
         fill(0);
-       text(this.nr,this.x,this.y+5);
+      // text(this.nr,this.x,this.y+5);
         this.hit();
     }
     hit(){
