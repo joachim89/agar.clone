@@ -37,7 +37,7 @@ const path = require('path')
 //   });
 app.use('/js', express.static(path.join(__dirname + '/js')))
 app.use('/libs', express.static(path.join(__dirname +  '/libs')))
-app.use( express.static(path.join('https://' + __dirname +  '/public')))
+app.use( express.static(path.join(__dirname +  '/public')))
 app.use(cors())
 
 module.exports = app
