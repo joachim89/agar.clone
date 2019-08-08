@@ -449,18 +449,18 @@ function sortScores(){
 //eventlisteners
 window.addEventListener('deviceorientation', handleOrientation);
 
-function handleOrientation(e){
+function handleOrientation(event){
  
-    if(e.gamma && e.beta){mobile=true;}else{mobile=false;}
+    if(event.gamma && event.beta){mobile=true;}else{mobile=false;}
   //alphaOr = e.alpha;
   if(!gamOff && !betOff){
-	  gamOff = e.gamma;
-	  betOff = e.beta;
+	  gamOff = event.gamma;
+	  betOff = event.beta;
 	  
   }
 
-  betaOr = e.beta - betOff;
-  gammaOr = e.gamma - gamOff;
+  betaOr = event.beta - betOff;
+  gammaOr = event.gamma - gamOff;
 
 }
 
