@@ -149,8 +149,8 @@ function draw() {
         textAlign(CENTER);
         text("Velkommen til multiplayerspillet!", w / 2, 290);
         fill(0);
-        textAlign(LEFT);
-        text("Gam: " + gammaOr + "\nBet: " + betaOr,10,10);
+        // textAlign(LEFT);
+        // text("Gam: " + gammaOr + "\nBet: " + betaOr,10,10);
 
        
         printHistory(0);
@@ -254,8 +254,8 @@ function draw() {
                 userY = constrain(newY, -gameSize + (h / 2) + (userMass / 2), h / 2 - (userMass / 2));
             } else {
                 var newSpeed = map(userMass, 20, 1200, .04, 0);
-                var newX = userX + constrain(((w / 2) - mouseX),-100,100) *newSpeed;
-                var newY = userY + constrain(((h / 2) - mouseY),-100,100) *newSpeed;
+                var newX = userX + constrain(((w / 2) - mouseX),-150,150) *newSpeed;
+                var newY = userY + constrain(((h / 2) - mouseY),-150,150) *newSpeed;
                 
                 
                 if (newX < userX) {
@@ -288,7 +288,7 @@ function draw() {
         blob(userName, w/2, h/2,userMass,userRgbc,isPaused,isLeft);
         sortScores();
         textAlign(RIGHT);
-        text("MOB?: " + mobile + "\nGAM: " + gammaOr + "\nBET: " + betaOr +"\n\nMAX: " + round(maxSpeed),w-50   ,50);
+       // text("MOB?: " + mobile + "\nGAM: " + gammaOr + "\nBET: " + betaOr +"\n\nMAX: " + round(maxSpeed),w-50   ,50);
     }
 }
 
