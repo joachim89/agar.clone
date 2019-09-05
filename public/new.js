@@ -221,7 +221,8 @@ function draw() {
                     }else{
                         socket.emit('player eaten', {text: (userName+" was eaten by " + players[x].name) });
                         userRestart();
-                        window.navigator.vibrate([30,80,100]);
+                        if(window.navigator && window.navigator.vibrate){
+                        window.navigator.vibrate([30,80,100]);}
                         enSnd.play();
 
                     }
@@ -302,7 +303,7 @@ function draw() {
 
 
 function clearIn() {
-    if (usernameText.value() == "Name") { usernameText.value(""); }
+    if (randomNames.includes(usernameText.value()) || usernameText.value() == "Name") { usernameText.value(""); }
 }
 function viewData() {
     socket.emit('view data');
@@ -398,7 +399,13 @@ class Apple{
         if(w/2 > userX+this.x-(userMass/2) && w/2 < userX+ this.x +(userMass/2) && (h/2)+10 >userY + this.y-(userMass/2) && h/2 + 15< userY + this.y+(userMass/2)){
             if(this.delayer==0){userMass++;
                 apples[this.nr].x=100000;
-                window.navigator.vibrate(50);
+                if (window.navigator && window.navigator.vibrate) {
+                    // Vibration supported
+                    window.navigator.vibrate(50);
+                 } else {
+                    // Vibration not supported
+                 }
+               
                 popSnd.play();
             socket.emit('move apple', {nr: this.nr});
            // console.log("move apple", this.nr);
