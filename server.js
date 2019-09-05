@@ -98,8 +98,9 @@ function addHistory(text) {
 }
 
 function getTime() {
+    var offset = 2;
     var d = new Date();
-    var n = (d.getHours() < 10 ? '0' : '') + d.getHours() + ":" + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes() + ":" + (d.getSeconds() < 10 ? '0' : '') + d.getSeconds();
+    var n = ((parseInt(d.getHours()) + offset) < 10 ? '0' : '') + (parseInt(d.getHours()) + offset) + ":" + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes() + ":" + (d.getSeconds() < 10 ? '0' : '') + d.getSeconds();
     return n;
 
 }
