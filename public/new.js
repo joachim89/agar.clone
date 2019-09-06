@@ -249,7 +249,7 @@ function draw() {
                     gamOff = false;
                     betOff = false;
                 }
-                var newSpeed = map(userMass, 20, 1200, .2, 0);
+                var newSpeed = map(userMass, 20, 800, .2, .00001);
                 var newX = userX - gammaOr * newSpeed;
                 var newY = userY - betaOr * newSpeed;
                 if (newX < userX) {
